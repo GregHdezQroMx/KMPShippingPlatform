@@ -15,7 +15,7 @@
 - [x] **Domain Layer:** 
     - Models: Define `QuoteRequest`, `QuoteResponse` and `Shipment`.
     - Business Logic: Implement `CalculateQuoteUseCase` with the 7 core rules.
-- [x] **Unit Tests:** 100% coverage of business rules in `commonTest`.
+- [x] **Unit Tests:** 100% coverage of business rules and border cases (Edge Testing) in `commonTest`.
 
 ## 🔵 Phase 2: Flutter UI Engine (`shipping_ui_package`)
 **Objective:** Build the Server-Driven UI motor in Dart.

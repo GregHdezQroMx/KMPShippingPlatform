@@ -87,6 +87,65 @@ class CalculateQuoteUseCaseTest {
     }
 
     @Test
+    fun `exactly 20kg does NOT trigger special handling`() = runTest {
+        val request = QuoteRequest(20.0, 100.0, ShippingType.STANDARD, "99999")
+        val result = useCase(request)
+        
+        assertTrue(result is QuoteResult.Success)
+        val data = (result as QuoteResult.Success).data
+        assertTrue(!data.details.specialHandlingApplied, "Should not apply special handling for exactly 20kg")
+    }
+
+    @Test
+    fun `exactly 200km results in exactly 2 days standard`() = runTest {
+        // 1 day base + ceil(200/200) = 1 + 1 = 2
+        val request = QuoteRequest(10.0, 200.0, ShippingType.STANDARD, "99999")
+        val result = useCase(request)
+        
+        assertTrue(result is QuoteResult.Success)
+        assertEquals(2, (result as QuoteResult.Success).data.estimatedDays)
+    }
+
+    @Test
+    fun `200_1km triggers 3rd day due to rounding up`() = runTest {
+        // 1 day base + ceil(200.1/200) = 1 + 2 = 3
+        val request = QuoteRequest(10.0, 200.1, ShippingType.STANDARD, "99999")
+        val result = useCase(request)
+        
+        assertTrue(result is QuoteResult.Success)
+        assertEquals(3, (result as QuoteResult.Success).data.estimatedDays)
+    }
+
+    @Test
+    fun `zip code starting with 05 is still a foreign zone`() = runTest {
+        val request = QuoteRequest(10.0, 100.0, ShippingType.STANDARD, "05123")
+        val result = useCase(request)
+        
+        assertTrue(result is QuoteResult.Success)
+        assertTrue((result as QuoteResult.Success).data.details.foreignZoneApplied)
+    }
+
+    @Test
+    fun `zip code starting with 06 is NOT a foreign zone`() = runTest {
+        val request = QuoteRequest(10.0, 100.0, ShippingType.STANDARD, "06123")
+        val result = useCase(request)
+        
+        assertTrue(result is QuoteResult.Success)
+        assertTrue(!(result as QuoteResult.Success).data.details.foreignZoneApplied)
+    }
+
+    @Test
+    fun `express delivery rounds up half days`() = runTest {
+        // distance 200.1 -> 3 days standard
+        // express: ceil(3 / 2) = 2
+        val request = QuoteRequest(10.0, 200.1, ShippingType.EXPRESS, "99999")
+        val result = useCase(request)
+        
+        assertTrue(result is QuoteResult.Success)
+        assertEquals(2, (result as QuoteResult.Success).data.estimatedDays)
+    }
+
+    @Test
     fun `return error when remote service fails`() = runTest {
         fakeService.shouldFail = true
         val request = QuoteRequest(10.0, 100.0, ShippingType.STANDARD, "01234")
