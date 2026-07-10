@@ -9,7 +9,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.Shipment
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.ShipmentStatus
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.db.DatabaseFactory
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -17,13 +16,6 @@ fun main() {
 }
 
 fun Application.module() {
-    // Tentative Database Init
-    try {
-        DatabaseFactory.init()
-    } catch (e: Exception) {
-        println("Warning: Database initialization failed. Using in-memory fallback. ${e.message}")
-    }
-
     install(ContentNegotiation) {
         json()
     }

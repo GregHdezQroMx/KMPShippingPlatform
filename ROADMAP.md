@@ -34,8 +34,12 @@
 - [ ] **Native UI:** Build the result screen using **Jetpack Compose**.
 - [ ] **Error Handling:** Display validation messages and stay on the form if KMP returns an error.
 
-## ⚪ Phase 5: Server & Refinement (`server`)
+## ⚪ Phase 5: Server & Documentation (`server`)
 **Objective:** Provide the remote multiplier and finalize deliverables.
-- [ ] **Ktor Endpoint:** Simple API that returns a dynamic multiplier for the "Remote Service".
+- [ ] **Ktor Endpoint:** Simple API that returns a dynamic multiplier for the "Remote Service" (Rule 7).
 - [ ] **README.md:** Finalize documentation (Architecture decisions, how to run, etc.).
-- [ ] **GPS Bonus (Optional):** Implement device location to auto-calculate distance if time permits.
+
+## 🌟 Bonus / Desirable Features
+- [ ] **Server Persistence:** Implement **Exposed + PostgreSQL** to store shipping history.
+- [ ] **GPS Distance Calculation:** Implement device location to auto-calculate distance between origin and destination.
+- [ ] **iOS Native Host:** Implementation of the native iOS host in SwiftUI consuming KMP and Flutter.

@@ -48,9 +48,11 @@ features/[feature_name]/
 *   **`:server`**: Ktor Backend implementation.
 
 ## 📱 Features
-- **Shared UI:** Single codebase for layouts, animations, and themes.
-- **Unified Logic:** Shared networking, data processing, and validation.
-- **Modular Design:** Independent layers for easy maintenance.
+- **Unified Logic:** Shared networking, data processing, and validation using KMP.
+- **H hibrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
+- **Modular Design:** Feature-First Clean Architecture for high maintainability.
+- **Server Integration:** Ktor-based API for dynamic rate multipliers.
+- **Database (Bonus):** Tentative persistence using Exposed + PostgreSQL (time-dependent).
 
 ---
 
