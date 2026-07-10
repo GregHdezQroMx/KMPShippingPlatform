@@ -1,34 +1,39 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Server.
+# KMPShippingPlatform
 
-* [/app/iosApp](./app/iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+A modern, full-stack Kotlin project demonstrating the power of **Kotlin Multiplatform (KMP)** and **Compose Multiplatform (CMP)** for a shipping logistics system.
 
-* [/app/sharedLogic](./app/sharedLogic/src) is for the code that will be shared between app targets in the project.
-  The most important subfolder is [commonMain](./app/sharedLogic/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+## 🚀 Overview
+This project shares both business logic and user interface across **Android** and **iOS**, ensuring a consistent experience and reduced development time. It follows **Clean Architecture** principles to maintain a highly scalable and testable codebase.
 
-* [/core](./core/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./core/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+## 🛠 Tech Stack
+- **Frontend:** [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) for shared UI between Android and iOS.
+- **Backend:** [Ktor](https://ktor.io/) asynchronous framework for the server-side logic.
+- **Language:** 100% Kotlin.
+- **Architecture:** Clean Architecture (Data, Domain, and Presentation layers).
+- **Dependency Management:** Gradle Version Catalog for centralized dependency control.
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+## 📂 Project Structure
+*   **`:app:androidApp`**: Native Android entry point.
+*   **`:app:sharedLogic`**: The heart of the app. Contains shared business logic, domain entities, and the common UI components.
+*   **`:app:iosApp`**: Native iOS entry point (SwiftUI wrapper for the shared Compose UI).
+*   **`:core`**: Shared utilities and base configurations used across all modules.
+*   **`:server`**: Backend implementation using Ktor.
 
-### Running the apps
-
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
-
-- Android app: `./gradlew :app:androidApp:assembleDebug`
-- Server: `./gradlew :server:run`
-- iOS app: open the [/app/iosApp](./app/iosApp) directory in Xcode and run it from there.
-
-### Running tests
-
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
-
-- Android tests: `./gradlew :app:sharedLogic:testAndroidHostTest`
-- Server tests: `./gradlew :server:test`
-- iOS tests: `./gradlew :app:sharedLogic:iosSimulatorArm64Test`
+## 📱 Features
+- **Shared UI:** Single codebase for layouts, animations, and themes.
+- **Unified Logic:** Shared networking, data processing, and validation.
+- **Modular Design:** Independent layers for easy maintenance.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+### How to Run
+
+- **Android:** Open in Android Studio and run the `:app:androidApp` module.
+- **iOS:** Open `app/iosApp/iosApp.xcodeproj` in Xcode or run via Android Studio if configured.
+- **Server:** Run `./gradlew :server:run`.
+
+---
+
+- Android tests: `./gradlew :app:sharedLogic:testAndroidHostTest`
+- Shared tests: `./gradlew :app:sharedLogic:test`
+- Server tests: `./gradlew :server:test`
