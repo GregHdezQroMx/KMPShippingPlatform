@@ -4,6 +4,8 @@ enum ComponentType {
   button,
   text,
   image,
+  card,
+  icon,
   unknown;
 
   static ComponentType fromString(String type) {
@@ -31,6 +33,8 @@ class SDUIComponent {
   final List<Map<String, dynamic>>? validations;
   final String? style;
   final String? imageUrl;
+  final String? iconName;
+  final List<SDUIComponent>? children;
 
   SDUIComponent({
     required this.id,
@@ -43,6 +47,8 @@ class SDUIComponent {
     this.validations,
     this.style,
     this.imageUrl,
+    this.iconName,
+    this.children,
   });
 
   factory SDUIComponent.fromJson(Map<String, dynamic> json) {
@@ -61,6 +67,10 @@ class SDUIComponent {
           .toList(),
       style: json['style'],
       imageUrl: json['imageUrl'],
+      iconName: json['iconName'],
+      children: (json['children'] as List?)
+          ?.map((e) => SDUIComponent.fromJson(Map<String, dynamic>.from(e)))
+          .toList(),
     );
   }
 }

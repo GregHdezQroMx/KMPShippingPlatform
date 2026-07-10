@@ -9,6 +9,7 @@ import 'widgets/sdui_select.dart';
 import 'widgets/sdui_button.dart';
 import 'widgets/sdui_text.dart';
 import 'widgets/sdui_image.dart';
+import 'widgets/sdui_card.dart';
 import '../../actions/domain/action_handler.dart';
 
 class SDUIFormRenderer extends ConsumerStatefulWidget {
@@ -58,6 +59,11 @@ class _SDUIFormRendererState extends ConsumerState<SDUIFormRenderer> {
         return SDUIText(component: component);
       case ComponentType.image:
         return SDUIImage(component: component);
+      case ComponentType.card:
+        return SDUICard(
+          component: component,
+          childBuilder: _buildComponent,
+        );
       default:
         return const SizedBox.shrink();
     }

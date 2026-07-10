@@ -8,10 +8,11 @@ class SDUIResultView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double price = data['precioFinal']?.toDouble() ?? 0.0;
-    final String currency = data['moneda'] ?? 'MXN';
-    final int days = data['tiempoEstimadoDias'] ?? 0;
-    final details = data['detalle'] ?? {};
+    // Corregimos las llaves para que coincidan con el modelo JSON (CamelCase)
+    final double price = (data['finalPrice'] ?? 0.0).toDouble();
+    final String currency = data['currency'] ?? 'MXN';
+    final int days = data['estimatedDays'] ?? 0;
+    final details = data['details'] ?? {};
 
     return Card(
       elevation: 4,
@@ -32,8 +33,8 @@ class SDUIResultView extends StatelessWidget {
             Text(
               '\$${price.toStringAsFixed(2)} $currency',
               style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
+                fontSize: 32, 
+                fontWeight: FontWeight.bold, 
                 color: Colors.blue
               ),
             ),
@@ -43,9 +44,9 @@ class SDUIResultView extends StatelessWidget {
               style: const TextStyle(fontSize: 18),
             ),
             const Divider(height: 40),
-            _buildDetailRow(L10n.getString('shipping_type'), details['tipoEnvio']),
-            _buildDetailRow(L10n.getString('foreign_zone'), details['zonaForaneaAplicada'] == true ? L10n.getString('yes') : L10n.getString('no')),
-            _buildDetailRow(L10n.getString('special_handling'), details['manejoEspecialAplicado'] == true ? L10n.getString('yes') : L10n.getString('no')),
+            _buildDetailRow(L10n.getString('shipping_type'), details['shippingType']),
+            _buildDetailRow(L10n.getString('foreign_zone'), details['foreignZoneApplied'] == true ? L10n.getString('yes') : L10n.getString('no')),
+            _buildDetailRow(L10n.getString('special_handling'), details['specialHandlingApplied'] == true ? L10n.getString('yes') : L10n.getString('no')),
           ],
         ),
       ),

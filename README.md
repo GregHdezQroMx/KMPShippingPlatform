@@ -64,6 +64,26 @@ lib/
 
 ---
 
+## 👨‍💻 Development with Visual Studio Code (Flutter/iOS Experts)
+
+This project is optimized for Flutter developers. The Flutter components are decoupled from the KMP core to allow a smooth development experience in VS Code.
+
+### 📥 Getting Started (Flutter Host)
+1. Open the root folder in VS Code.
+2. The IDE should detect two Flutter projects: `shipping_ui_package` and `flutter_app`.
+3. Open a terminal and run:
+   ```bash
+   cd flutter_app
+   flutter pub get
+   ```
+4. Select your preferred emulator (iOS Simulator or Android Emulator).
+5. Press **F5** or go to the "Run and Debug" tab to start the `flutter_app`.
+
+### 🧩 Package Integration
+The `flutter_app` consumes the `shipping_ui_package` using a local path dependency. Any changes made to the package will be immediately available in the host app without additional steps.
+
+---
+
 ## 🚛 Shipping Quote Engine (Business Rules)
 
 The core calculation logic (implemented in `CalculateQuoteUseCase`) follows these 7 mandatory rules:

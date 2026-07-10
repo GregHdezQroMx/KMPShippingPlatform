@@ -27,11 +27,11 @@
 
 ## 🟡 Phase 3: Flutter Legacy Host (`flutter_app`)
 **Objective:** Implement the original business logic in Dart as required by the challenge.
-- [ ] **Architecture:** Clean Architecture / Feature-first approach using **Riverpod** for state management.
-- [ ] **Dart Quote Engine:** Re-implement the 7 rules in Dart.
-- [ ] **UI Integration:** Use the `shipping_ui_package` to render the form.
-- [ ] **Navigation:** Create a Dart-only result screen for this client.
-- [ ] **Dart Tests:** Unit tests for the business rules in Flutter.
+- [x] **Architecture:** Clean Architecture / Feature-first approach using **Riverpod** for state management.
+- [x] **Dart Quote Engine:** Re-implement the 7 rules in Dart.
+- [x] **UI Integration:** Use the `shipping_ui_package` to render the form.
+- [x] **Navigation:** Create a Dart-only result screen for this client.
+- [x] **Dart Tests:** Unit tests for the business rules in Flutter.
 
 ## 🟠 Phase 4: Native Android Host (`androidApp`)
 **Objective:** The "Future" architecture: Native Host + KMP Logic + Flutter UI.
