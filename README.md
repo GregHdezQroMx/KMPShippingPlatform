@@ -18,17 +18,21 @@ This project shares business logic across **Android**, **iOS**, and **Server** u
 This project follows a **Feature-First Clean Architecture** approach for both KMP and Flutter components.
 
 ### 🧩 Kotlin Multiplatform (KMP) Structure
-Shared logic is organized by features in the `:app:sharedLogic` and `:core` modules:
+The application uses a **Shared Domain** strategy where business logic is centralized in the `:core` module to be consumed by both the **Server** and **Mobile Apps**:
+
 ```text
-features/[feature_name]/
-├── domain/
-│   ├── model/       # Domain Entities
-│   ├── repository/  # Repository Interfaces
-│   └── usecase/     # Business Logic (Use Cases)
-└── data/
-    ├── remote/      # API Services (Ktor)
-    ├── local/       # Database (Room/SQLDelight)
-    └── repository/  # Repository Implementations
+core/ (Shared Business Rules)
+└── features/quoting/domain/
+    ├── model/       # QuoteRequest, Shipment (Serializable)
+    ├── repository/  # Interfaces (TariffRemoteService)
+    └── usecase/     # Calculation Engine (CalculateQuoteUseCase)
+
+sharedLogic/ (Mobile Data Implementation)
+└── features/quoting/data/
+    └── repository/  # Mock implementations for mobile dev
+
+server/ (Ktor Backend)
+└── Application.kt   # Consumes CalculateQuoteUseCase for validation
 ```
 
 ### 💙 Flutter Host Structure
@@ -49,10 +53,26 @@ features/[feature_name]/
 
 ## 📱 Features
 - **Unified Logic:** Shared networking, data processing, and validation using KMP.
-- **H hibrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
+- **Hybrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
 - **Modular Design:** Feature-First Clean Architecture for high maintainability.
 - **Server Integration:** Ktor-based API for dynamic rate multipliers.
-- **Database (Bonus):** Tentative persistence using Exposed + PostgreSQL (time-dependent).
+
+---
+
+## 🧠 Architecture Decisions & Professional Best Practices
+
+### The "Source of Truth" in Production
+In a **production-grade environment**, the shipping calculation engine (the 7 business rules) must reside on the **Backend** as the ultimate **Source of Truth**. This ensures:
+1. **Security:** Preventing price manipulation on the client side.
+2. **Maintenance:** Allowing instant updates to tariffs without requiring App Store/Play Store releases.
+3. **Consistency:** Guaranteed identical results across all platforms (Web, Mobile, etc.).
+
+### The KMP Competitive Advantage
+By using **Kotlin Multiplatform (KMP)**, we can write the calculation engine **once** in a pure Kotlin module and share it between:
+*   **The Backend (Ktor/JVM):** For final, secure calculations.
+*   **The Mobile Apps (Android/iOS):** For real-time user feedback and offline estimation.
+
+This approach combines **Backend Security** with **Frontend Responsiveness** using the exact same codebase, eliminating cent-off discrepancies between client and server.
 
 ---
 

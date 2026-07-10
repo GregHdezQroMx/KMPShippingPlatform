@@ -19,11 +19,38 @@ data class QuoteRequest(
 @Serializable
 data class QuoteResponse(
     val finalPrice: Double,
+    val currency: String = "MXN",
     val estimatedDays: Int,
-    val currency: String = "MXN"
+    val details: QuoteDetail
 )
 
+@Serializable
+data class QuoteDetail(
+    val baseTariff: Double,
+    val shippingType: ShippingType,
+    val specialHandlingApplied: Boolean,
+    val foreignZoneApplied: Boolean,
+    val remoteMultiplier: Double
+)
+
+@Serializable
 sealed class QuoteResult {
-    data class Success(val quote: QuoteResponse) : QuoteResult()
-    data class ValidationError(val message: String) : QuoteResult()
+    @Serializable
+    data class Success(val data: QuoteResponse) : QuoteResult()
+    
+    @Serializable
+    data class Error(val error: QuoteError) : QuoteResult()
+}
+
+@Serializable
+data class QuoteError(
+    val type: QuoteErrorType,
+    val code: String,
+    val message: String
+)
+
+@Serializable
+enum class QuoteErrorType {
+    VALIDATION_ERROR,
+    REMOTE_SERVICE_ERROR
 }
