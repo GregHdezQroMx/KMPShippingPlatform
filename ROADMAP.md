@@ -1,5 +1,13 @@
 # 🗺️ Shipping Platform - Technical Challenge Roadmap
 
+## ✅ Phase 0: Infrastructure & Architecture Setup
+**Objective:** Prepare the multi-module project for a professional hybrid development.
+- [x] **Feature-First Clean Architecture:** Implement the directory structure in `sharedLogic` and `core`.
+- [x] **Project Decoupling:** Remove `sharedUI` and Compose Multiplatform dependencies from shared modules.
+- [x] **Native Foundation:** Establish native `androidApp` with Jetpack Compose.
+- [x] **Documentation & Standards:** Define project structure in `README.md` and established the Roadmap.
+- [x] **Database Refactoring:** Move persistence logic to Bonus section to keep core deliverables lightweight.
+
 ## 🟢 Phase 1: KMP Shared Logic (`sharedLogic`)
 **Objective:** Implement the "brain" of the application in Kotlin using **Feature-First Clean Architecture**.
 - [ ] **Infrastructure:** Setup `features/quoting` structure.
