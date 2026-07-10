@@ -1,23 +1,51 @@
 # KMPShippingPlatform
 
-A modern, full-stack Kotlin project demonstrating the power of **Kotlin Multiplatform (KMP)** and **Compose Multiplatform (CMP)** for a shipping logistics system.
+A modern, full-stack Kotlin project demonstrating the power of **Kotlin Multiplatform (KMP)** for a shipping logistics system.
 
 ## 🚀 Overview
-This project shares both business logic and user interface across **Android** and **iOS**, ensuring a consistent experience and reduced development time. It follows **Clean Architecture** principles to maintain a highly scalable and testable codebase.
+This project shares business logic across **Android**, **iOS**, and **Server** using **Kotlin Multiplatform**, ensuring consistency and reducing development time. It follows **Clean Architecture** principles to maintain a highly scalable and testable codebase.
 
 ## 🛠 Tech Stack
-- **Frontend:** [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) for shared UI between Android and iOS.
+- **Multiplatform:** [Kotlin Multiplatform (KMP)](https://kotlinlang.org/docs/multiplatform.html) for shared business logic.
+- **Frontend (Android):** Jetpack Compose for the native Android UI.
+- **Frontend (iOS):** SwiftUI for the native iOS UI.
 - **Backend:** [Ktor](https://ktor.io/) asynchronous framework for the server-side logic.
 - **Language:** 100% Kotlin.
-- **Architecture:** Clean Architecture (Data, Domain, and Presentation layers).
-- **Dependency Management:** Gradle Version Catalog for centralized dependency control.
+- **Architecture:** Clean Architecture (Feature-First approach).
 
 ## 📂 Project Structure
+
+This project follows a **Feature-First Clean Architecture** approach for both KMP and Flutter components.
+
+### 🧩 Kotlin Multiplatform (KMP) Structure
+Shared logic is organized by features in the `:app:sharedLogic` and `:core` modules:
+```text
+features/[feature_name]/
+├── domain/
+│   ├── model/       # Domain Entities
+│   ├── repository/  # Repository Interfaces
+│   └── usecase/     # Business Logic (Use Cases)
+└── data/
+    ├── remote/      # API Services (Ktor)
+    ├── local/       # Database (Room/SQLDelight)
+    └── repository/  # Repository Implementations
+```
+
+### 💙 Flutter Host Structure
+The Flutter side (Packages and Host App) follows a similar feature-first pattern:
+```text
+features/[feature_name]/
+├── presentation/    # UI (Widgets, Pages) & Riverpod Providers
+├── domain/          # Business Logic & Entities (Dart)
+└── data/            # Data Sources & Repositories (Dart)
+```
+
+### 📦 Modules
 *   **`:app:androidApp`**: Native Android entry point.
-*   **`:app:sharedLogic`**: The heart of the app. Contains shared business logic, domain entities, and the common UI components.
-*   **`:app:iosApp`**: Native iOS entry point (SwiftUI wrapper for the shared Compose UI).
-*   **`:core`**: Shared utilities and base configurations used across all modules.
-*   **`:server`**: Backend implementation using Ktor.
+*   **`:app:sharedLogic`**: The "Brain" (KMP). Contains shared business logic and common UI components.
+*   **`:app:iosApp`**: Native iOS entry point.
+*   **`:core`**: Common entities and utilities shared with the Server.
+*   **`:server`**: Ktor Backend implementation.
 
 ## 📱 Features
 - **Shared UI:** Single codebase for layouts, animations, and themes.
