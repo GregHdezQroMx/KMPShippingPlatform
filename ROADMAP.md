@@ -18,11 +18,12 @@
 - [x] **Unit Tests:** 100% coverage of business rules and border cases (Edge Testing) in `commonTest`.
 
 ## 🔵 Phase 2: Flutter UI Engine (`shipping_ui_package`)
-**Objective:** Build the Server-Driven UI motor in Dart.
-- [ ] **Component Catalog:** Implement Widgets (Text, TextInput, Select, Image, Button) that self-render from JSON.
-- [ ] **JSON Parser:** Logic to transform the UI JSON into a functional Flutter widget tree.
-- [ ] **Form State Management:** Use **Riverpod** to capture user inputs and handle local format validations (Required, Regex for Zip Code).
-- [ ] **Method Channel (Package Side):** Define the protocol to receive JSON and emit "Submit" events with captured data.
+**Objective:** Build the Server-Driven UI motor in Dart using **Feature-First Clean Architecture**.
+- [x] **Architecture Setup:** Organize the package following the **Feature-First** pattern to support multiple UI domains (e.g., `quoting`, `tracking`).
+- [x] **Component Catalog:** Implement Widgets (Text, TextInput, Select, Image, Button) that self-render from JSON.
+- [x] **JSON Parser:** Logic to transform the UI JSON into a functional Flutter widget tree.
+- [x] **Form State Management:** Use **Riverpod** to capture user inputs and handle local format validations (Required, Regex for Zip Code).
+- [x] **Method Channel (Package Side):** Define the protocol to receive JSON and emit "Submit" events with captured data.
 
 ## 🟡 Phase 3: Flutter Legacy Host (`flutter_app`)
 **Objective:** Implement the original business logic in Dart as required by the challenge.
@@ -47,8 +48,14 @@
 - [ ] **Ktor Endpoint:** Simple API that returns a dynamic multiplier for the "Remote Service" (Rule 7).
 - [ ] **README.md:** Finalize documentation (Architecture decisions, how to run, etc.).
 
-## 🌟 Bonus / Desirable Features
+## 🟣 Phase 6: Native iOS & SDUI Engines (Bonus / Future Proof)
+**Objective:** Expand to iOS and replicate the Flutter rendering logic in 100% Native Stacks.
 - [ ] **iOS Native Host:** Implementation of the native iOS host in SwiftUI consuming KMP and Flutter.
+- [ ] **Compose SDUI Motor:** Implementation of the Component Catalog in Jetpack Compose.
+- [ ] **SwiftUI SDUI Motor:** Implementation of the Component Catalog in SwiftUI.
+- [ ] **JSON Parity:** Ensure the same JSON renders identical UI across Flutter, Android, and iOS.
+
+## 🌟 Bonus / Desirable Features
 - [ ] **Full-Stack Logic Sharing:** Expose the KMP `CalculateQuoteUseCase` in the `:server` module as the final Source of Truth for price validation.
 - [ ] **Server Persistence:** Implement **Exposed + PostgreSQL** to store shipping history.
 - [ ] **GPS Distance Calculation:** Implement device location to auto-calculate distance between origin and destination.

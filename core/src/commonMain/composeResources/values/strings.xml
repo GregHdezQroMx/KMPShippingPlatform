@@ -1,0 +1,7 @@
+<resources>
+    <string name="invalid_weight">El peso debe ser mayor a 0</string>
+    <string name="invalid_distance">La distancia debe ser mayor a 0</string>
+    <string name="service_unavailable">No se pudo obtener el multiplicador de zona, intenta de nuevo</string>
+    <string name="success_title">¡Cotización Exitosa!</string>
+    <string name="estimated_time">Tiempo estimado: %d días</string>
+</resources>

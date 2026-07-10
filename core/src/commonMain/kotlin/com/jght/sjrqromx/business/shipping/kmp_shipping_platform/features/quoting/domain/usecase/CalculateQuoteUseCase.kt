@@ -1,7 +1,9 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.usecase
 
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.resources.*
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.*
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.repository.TariffRemoteService
+import org.jetbrains.compose.resources.getString
 import kotlin.math.ceil
 
 class CalculateQuoteUseCase(
@@ -11,12 +13,20 @@ class CalculateQuoteUseCase(
         // Regla 5: Validaciones de negocio
         if (request.weightKg <= 0) {
             return QuoteResult.Error(
-                QuoteError(QuoteErrorType.VALIDATION_ERROR, "INVALID_WEIGHT", "El peso debe ser mayor a 0")
+                QuoteError(
+                    type = QuoteErrorType.VALIDATION_ERROR, 
+                    code = "INVALID_WEIGHT", 
+                    message = getString(Res.string.invalid_weight)
+                )
             )
         }
         if (request.distanceKm <= 0) {
             return QuoteResult.Error(
-                QuoteError(QuoteErrorType.VALIDATION_ERROR, "INVALID_DISTANCE", "La distancia debe ser mayor a 0")
+                QuoteError(
+                    type = QuoteErrorType.VALIDATION_ERROR, 
+                    code = "INVALID_DISTANCE", 
+                    message = getString(Res.string.invalid_distance)
+                )
             )
         }
 
@@ -28,7 +38,7 @@ class CalculateQuoteUseCase(
                 QuoteError(
                     type = QuoteErrorType.REMOTE_SERVICE_ERROR,
                     code = "TARIFAS_SERVICE_UNAVAILABLE",
-                    message = "No se pudo obtener el multiplicador de zona, intenta de nuevo"
+                    message = getString(Res.string.service_unavailable)
                 )
             )
         }

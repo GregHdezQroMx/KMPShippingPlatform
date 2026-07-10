@@ -1,0 +1,7 @@
+<resources>
+    <string name="invalid_weight">Weight must be greater than 0</string>
+    <string name="invalid_distance">Distance must be greater than 0</string>
+    <string name="service_unavailable">Could not get zone multiplier, please try again</string>
+    <string name="success_title">Quote Successful!</string>
+    <string name="estimated_time">Estimated time: %d days</string>
+</resources>

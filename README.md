@@ -35,13 +35,17 @@ server/ (Ktor Backend)
 └── Application.kt   # Consumes CalculateQuoteUseCase for validation
 ```
 
-### 💙 Flutter Host Structure
-The Flutter side (Packages and Host App) follows a similar feature-first pattern:
+### 💙 Flutter UI Package Structure (`shipping_ui_package`)
+The engine is **domain-agnostic** and follows a **Feature-First** pattern based on UI responsibilities:
 ```text
-features/[feature_name]/
-├── presentation/    # UI (Widgets, Pages) & Riverpod Providers
-├── domain/          # Business Logic & Entities (Dart)
-└── data/            # Data Sources & Repositories (Dart)
+lib/
+├── core/
+│   └── bridge/          # MethodChannel & Platform Communication
+├── features/
+│   ├── parser/          # JSON to Domain Model transformation
+│   ├── components/      # UI Catalog (Inputs, Buttons, Cards)
+│   └── actions/         # Interaction handlers (Submit, Navigate)
+└── shared/              # Common UI constants & themes
 ```
 
 ### 📦 Modules
@@ -54,6 +58,7 @@ features/[feature_name]/
 ## 📱 Features
 - **Unified Logic:** Shared networking, data processing, and validation using KMP.
 - **Hybrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
+- **Native SDUI (Bonus):** Replicated rendering engine in Jetpack Compose and SwiftUI for full native performance and parity.
 - **Modular Design:** Feature-First Clean Architecture for high maintainability.
 - **Server Integration:** Ktor-based API for dynamic rate multipliers.
 
