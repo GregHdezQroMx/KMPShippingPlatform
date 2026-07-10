@@ -1,0 +1,7 @@
+TEAM_ID=
+
+PRODUCT_NAME=KMPShippingPlatform
+PRODUCT_BUNDLE_IDENTIFIER=com.jght.sjrqromx.business.shipping.kmp_shipping_platform.KMPShippingPlatform$(TEAM_ID)
+
+CURRENT_PROJECT_VERSION=1
+MARKETING_VERSION=1.0
