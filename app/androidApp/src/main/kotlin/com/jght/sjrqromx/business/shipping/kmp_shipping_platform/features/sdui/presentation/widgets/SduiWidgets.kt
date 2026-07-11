@@ -39,18 +39,17 @@ fun SduiTextInputComponent(
     formValues: MutableMap<String, String>,
     formErrors: Map<String, String?>
 ) {
-    var text by remember { mutableStateOf(formValues[component.id] ?: "") }
+    val text = formValues[component.id] ?: ""
     val error = formErrors[component.id]
 
     OutlinedTextField(
         value = text,
         onValueChange = {
-            text = it
             formValues[component.id] = it
         },
         label = { Text(component.label) },
         isError = error != null,
-        supportingText = { if (error != null) Text(error) },
+        supportingText = { if (error != null) Text(error!!) },
         modifier = Modifier.fillMaxWidth()
     )
 }

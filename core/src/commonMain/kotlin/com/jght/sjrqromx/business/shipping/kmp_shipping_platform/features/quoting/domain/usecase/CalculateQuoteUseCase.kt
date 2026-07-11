@@ -30,6 +30,17 @@ class CalculateQuoteUseCase(
             )
         }
 
+        // Validación de CP (Regla implícita de formato)
+        if (request.destinationZipCode.length != 5 || request.destinationZipCode.toIntOrNull() == null) {
+            return QuoteResult.Error(
+                QuoteError(
+                    type = QuoteErrorType.VALIDATION_ERROR,
+                    code = "INVALID_ZIP",
+                    message = getString(Res.string.invalid_zip)
+                )
+            )
+        }
+
         // Regla 7: Servicio remoto con multiplicador dinámico
         val remoteResult = tariffService.getRemoteMultiplier(request.destinationZipCode)
         

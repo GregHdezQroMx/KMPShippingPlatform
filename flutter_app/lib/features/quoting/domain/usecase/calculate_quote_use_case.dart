@@ -25,6 +25,15 @@ class CalculateQuoteUseCase {
       );
     }
 
+    // Validación de CP (Añadida para robustez)
+    if (request.destinationZipCode.length != 5 || int.tryParse(request.destinationZipCode) == null) {
+      return QuoteError(
+        type: QuoteErrorType.validationError,
+        code: 'INVALID_ZIP',
+        message: 'El código postal debe tener 5 dígitos',
+      );
+    }
+
     try {
       // Rule 7: Remote multiplier
       final remoteMultiplier = await _repository.getRemoteMultiplier(request.destinationZipCode);

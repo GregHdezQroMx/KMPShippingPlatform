@@ -4,4 +4,5 @@
     <string name="service_unavailable">No se pudo obtener el multiplicador de zona, intenta de nuevo</string>
     <string name="success_title">¡Cotización Exitosa!</string>
     <string name="estimated_time">Tiempo estimado: %d días</string>
+    <string name="invalid_zip">El código postal debe tener 5 dígitos</string>
 </resources>

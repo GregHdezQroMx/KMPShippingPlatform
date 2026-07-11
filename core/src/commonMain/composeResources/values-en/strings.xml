@@ -4,4 +4,5 @@
     <string name="service_unavailable">Could not get zone multiplier, please try again</string>
     <string name="success_title">Quote Successful!</string>
     <string name="estimated_time">Estimated time: %d days</string>
+    <string name="invalid_zip">Zip code must be 5 digits</string>
 </resources>

@@ -105,6 +105,24 @@ fun getResultUiJson(
             "style": "subtitle"
           },
           {
+            "type": "text",
+            "id": "detail_type",
+            "label": "Tipo de envío: $type",
+            "style": "body"
+          },
+          {
+            "type": "text",
+            "id": "detail_foreign",
+            "label": "Zona Foránea: $foreign",
+            "style": "body"
+          },
+          {
+            "type": "text",
+            "id": "detail_special",
+            "label": "Manejo Especial: $special",
+            "style": "body"
+          },
+          {
             "type": "button",
             "id": "reset",
             "label": "Nueva Cotización",
