@@ -1,8 +1,6 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,9 +21,9 @@ enum class UiEngine { FLUTTER, COMPOSE }
 fun App() {
     var currentEngine by remember { mutableStateOf(UiEngine.COMPOSE) }
     var currentJson by remember { mutableStateOf(QUOTING_UI_JSON) }
+    val currentErrors = remember { mutableStateMapOf<String, String?>() }
     val scope = rememberCoroutineScope()
     
-    // Inyección manual de KMP UseCase
     val calculateQuoteUseCase = remember { 
         CalculateQuoteUseCase(MockTariffRemoteService()) 
     }
@@ -36,9 +34,11 @@ fun App() {
                 UiEngine.COMPOSE -> {
                     ComposeSduiRenderer(
                         jsonString = currentJson,
+                        externalErrors = currentErrors,
                         onAction = { event, data ->
                             if (event == "COTIZAR_ENVIO") {
                                 scope.launch {
+                                    currentErrors.clear()
                                     val request = QuoteRequest(
                                         weightKg = data["peso"]?.toDoubleOrNull() ?: 0.0,
                                         distanceKm = data["distancia"]?.toDoubleOrNull() ?: 0.0,
@@ -54,26 +54,40 @@ fun App() {
                                             foreign = if (result.data.details.foreignZoneApplied) "Sí" else "No",
                                             special = if (result.data.details.specialHandlingApplied) "Sí" else "No"
                                         )
+                                    } else if (result is QuoteResult.Error) {
+                                        val fieldId = when {
+                                            result.error.code.contains("WEIGHT") -> "peso"
+                                            result.error.code.contains("DISTANCE") -> "distancia"
+                                            result.error.code.contains("ZIP") -> "codigoPostal"
+                                            else -> ""
+                                        }
+                                        if (fieldId.isNotEmpty()) {
+                                            currentErrors[fieldId] = result.error.message
+                                        }
                                     }
-                                    // Error handling would go here, updating currentJson or a state
                                 }
                             } else if (event == "RESET") {
+                                currentErrors.clear()
                                 currentJson = QUOTING_UI_JSON
                             }
                         },
-                        onReset = { currentJson = QUOTING_UI_JSON }
+                        onReset = { 
+                            currentErrors.clear()
+                            currentJson = QUOTING_UI_JSON 
+                        }
                     )
                 }
                 UiEngine.FLUTTER -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text("Flutter Engine Placeholder")
-                            Text("Waiting for 'flutter create -t module'")
+                            Text("Waiting for MethodChannel setup")
                         }
                     }
                 }
             }
 
+            // Engine Switcher Overlay
             SmallFloatingActionButton(
                 onClick = { 
                     currentEngine = if (currentEngine == UiEngine.COMPOSE) UiEngine.FLUTTER else UiEngine.COMPOSE 

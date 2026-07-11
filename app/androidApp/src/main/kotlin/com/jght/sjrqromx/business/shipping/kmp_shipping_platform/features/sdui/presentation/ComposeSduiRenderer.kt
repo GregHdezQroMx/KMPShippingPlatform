@@ -10,7 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIComponent
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIScreen
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIScreenContainer
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.presentation.widgets.*
 import kotlinx.serialization.json.Json
 
@@ -18,16 +18,14 @@ import kotlinx.serialization.json.Json
 @Composable
 fun ComposeSduiRenderer(
     jsonString: String,
+    externalErrors: Map<String, String?> = emptyMap(),
     onAction: (String, Map<String, String>) -> Unit,
     onReset: () -> Unit
 ) {
     val sduiScreen = remember(jsonString) {
         try {
             val json = Json { ignoreUnknownKeys = true }
-            // The JSON from the requirements is wrapped in a "screen" object or is the screen itself?
-            // Usually it's {"screen": {...}}
-            // Let's handle both or assume container based on our model
-            val container = json.decodeFromString<com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIScreenContainer>(jsonString)
+            val container = json.decodeFromString<SDUIScreenContainer>(jsonString)
             container.screen
         } catch (e: Exception) {
             null
@@ -42,7 +40,10 @@ fun ComposeSduiRenderer(
     }
 
     val formValues = remember { mutableStateMapOf<String, String>() }
-    val formErrors = remember { mutableStateMapOf<String, String?>() }
+    // Fusionamos errores locales con los externos que vienen del Host (KMP)
+    val formErrors = remember(externalErrors) { 
+        mutableStateMapOf<String, String?>().apply { putAll(externalErrors) } 
+    }
 
     Scaffold(
         topBar = {
