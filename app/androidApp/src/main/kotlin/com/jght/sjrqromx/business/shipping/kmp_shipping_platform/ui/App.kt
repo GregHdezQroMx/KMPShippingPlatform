@@ -21,11 +21,16 @@ enum class UiEngine { FLUTTER, COMPOSE }
 fun App() {
     var currentEngine by remember { mutableStateOf(UiEngine.COMPOSE) }
     var currentJson by remember { mutableStateOf(QUOTING_UI_JSON) }
+    var simulateNetworkError by remember { mutableStateOf(false) }
     val currentErrors = remember { mutableStateMapOf<String, String?>() }
     val scope = rememberCoroutineScope()
     
-    val calculateQuoteUseCase = remember { 
-        CalculateQuoteUseCase(MockTariffRemoteService()) 
+    // Sincronización del servicio mock
+    val tariffService = remember { MockTariffRemoteService() }
+    val calculateQuoteUseCase = remember { CalculateQuoteUseCase(tariffService) }
+
+    LaunchedEffect(simulateNetworkError) {
+        tariffService.shouldFail = simulateNetworkError
     }
 
     MaterialTheme {
@@ -61,8 +66,13 @@ fun App() {
                                             result.error.code.contains("ZIP") -> "codigoPostal"
                                             else -> ""
                                         }
+                                        
                                         if (fieldId.isNotEmpty()) {
                                             currentErrors[fieldId] = result.error.message
+                                        } else {
+                                            // Si es un error de red, mostramos un SnackBar o actualizamos el JSON
+                                            // Para esta prueba, lo inyectaremos como un componente de error al inicio
+                                            currentErrors["general"] = result.error.message
                                         }
                                     }
                                 }
@@ -81,27 +91,34 @@ fun App() {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text("Flutter Engine Placeholder")
-                            Text("Waiting for MethodChannel setup")
                         }
                     }
                 }
             }
 
-            // Engine Switcher Overlay
-            SmallFloatingActionButton(
-                onClick = { 
-                    currentEngine = if (currentEngine == UiEngine.COMPOSE) UiEngine.FLUTTER else UiEngine.COMPOSE 
-                },
+            // Controles flotantes
+            Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                horizontalAlignment = Alignment.End
             ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Error de Red", style = MaterialTheme.typography.labelSmall)
+                    Spacer(Modifier.width(8.dp))
+                    Switch(checked = simulateNetworkError, onCheckedChange = { simulateNetworkError = it })
+                }
+                Spacer(Modifier.height(8.dp))
+                SmallFloatingActionButton(
+                    onClick = { currentEngine = if (currentEngine == UiEngine.COMPOSE) UiEngine.FLUTTER else UiEngine.COMPOSE },
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ) {
-                    Text(if (currentEngine == UiEngine.COMPOSE) "Switch to Flutter" else "Switch to Compose")
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(if (currentEngine == UiEngine.COMPOSE) "Switch to Flutter" else "Switch to Compose")
+                    }
                 }
             }
         }

@@ -15,7 +15,7 @@ data class ZoneConfig(
 )
 
 class MockTariffRemoteService(
-    private val shouldFail: Boolean = false
+    var shouldFail: Boolean = false
 ) : TariffRemoteService {
 
     private val zoneConfigs = listOf(
