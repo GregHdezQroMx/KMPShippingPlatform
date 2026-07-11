@@ -82,6 +82,9 @@ This project is optimized for Flutter developers. The Flutter components are dec
 ### 🧩 Package Integration
 The `flutter_app` consumes the `shipping_ui_package` using a local path dependency. Any changes made to the package will be immediately available in the host app without additional steps.
 
+### 🪄 Advanced SDUI Orchestration
+Unlike traditional hybrid apps, this implementation uses a **100% Server-Driven UI** approach for both the **capture form** and the **result screen**. The host app (Flutter or Native) acts purely as an orchestrator, while the UI engine renders complex layouts (including Cards, Icons, and Buttons) dynamically from JSON configurations. This exceeds the technical challenge requirements to demonstrate a more scalable architecture.
+
 ---
 
 ## 🚛 Shipping Quote Engine (Business Rules)

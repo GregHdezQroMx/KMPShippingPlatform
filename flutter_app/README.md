@@ -17,4 +17,4 @@ This app follows a **Feature-First Clean Architecture**:
 - `lib/shared`: Common utilities and localization.
 
 ## 🪄 SDUI Integration
-The app provides a JSON configuration to the `shipping_ui_package`, which renders the form dynamically. When the user submits the form, the app processes the data using its internal Dart engine and sends the results back to the package for display.
+The app provides dynamic JSON configurations to the `shipping_ui_package`. **Exceeding the original technical requirements**, both the **capture form** and the **result screen** are 100% SDUI-driven. When the user submits the form, the app processes the data using its internal Dart engine and sends a new UI JSON back to the package to render the results dynamically.

@@ -20,6 +20,9 @@ class SDUIText extends StatelessWidget {
       case 'subtitle':
         style = const TextStyle(fontSize: 16, color: Colors.grey);
         break;
+      case 'price':
+        style = const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.blue);
+        break;
       default:
         style = const TextStyle(fontSize: 16);
     }

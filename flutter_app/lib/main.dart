@@ -40,12 +40,17 @@ class _ShippingLegacyAppState extends ConsumerState<ShippingLegacyApp> {
     final result = await ref.read(quotingProvider.notifier).processSubmit(data);
 
     if (result is QuoteSuccess) {
-      final successJson = jsonEncode({
-        'status': 'SUCCESS',
-        'data': result.data.toJson(),
-      });
-      // Simulamos que la respuesta viene de la plataforma nativa
-      UIBridgeHandler.simulateNativeCall('renderResult', successJson);
+      // MAGIA REAL: Generamos un JSON de UI para la pantalla de resultados
+      // Esto es Server-Driven UI puro: el host decide qué pintar enviando un nuevo JSON.
+      final resultJson = getResultUiJson(
+        price: result.data.finalPrice.toStringAsFixed(2),
+        days: result.data.estimatedDays.toString(),
+        type: result.data.details.shippingType.name.toUpperCase(),
+        foreign: result.data.details.foreignZoneApplied ? 'Sí' : 'No',
+        special: result.data.details.specialHandlingApplied ? 'Sí' : 'No',
+      );
+      
+      UIBridgeHandler.simulateNativeCall('renderUI', resultJson);
     } else if (result is QuoteError) {
       UIBridgeHandler.simulateNativeCall('showValidationError', {
         'code': result.code,

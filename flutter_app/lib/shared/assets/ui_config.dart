@@ -59,3 +59,63 @@ const String quotingUiJson = '''
   }
 }
 ''';
+
+String getResultUiJson({
+  required String price,
+  required String days,
+  required String type,
+  required String foreign,
+  required String special,
+}) =>
+    '''
+{
+  "screen": {
+    "id": "resultado_envio",
+    "title": "Resultado",
+    "components": [
+      {
+        "type": "card",
+        "id": "result_card",
+        "label": "Card",
+        "children": [
+          {
+            "type": "icon",
+            "id": "success_icon",
+            "label": "Icon",
+            "iconName": "check_circle",
+            "style": "success"
+          },
+          {
+            "type": "text",
+            "id": "success_title",
+            "label": "¡Cotización Exitosa!",
+            "style": "headline"
+          },
+          {
+            "type": "text",
+            "id": "price_text",
+            "label": "\$$price MXN",
+            "style": "price"
+          },
+          {
+            "type": "text",
+            "id": "days_text",
+            "label": "Tiempo estimado: $days días",
+            "style": "subtitle"
+          },
+          {
+            "type": "button",
+            "id": "reset",
+            "label": "Nueva Cotización",
+            "style": "primary",
+            "action": {
+              "type": "submit",
+              "event": "RESET"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+''';
