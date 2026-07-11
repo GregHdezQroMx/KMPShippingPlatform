@@ -34,15 +34,16 @@
 - [x] **Navigation:** 100% SDUI-driven result screen (Exceeding technical test requirements for modularity and consistency).
 - [x] **Dart Tests:** Unit tests for the business rules in Flutter.
 
-## 🟠 Phase 4: Native Android Host (`androidApp`)
-**Objective:** The "Future" architecture: Native Host + KMP Logic + Flutter UI.
+## 🟠 Phase 4: Native Android Host & Hybrid SDUI
+**Objective:** The "Future" architecture: Native Host + KMP Logic + Dual Rendering Engines.
 - [ ] **Flutter Integration:** Embed the Flutter UI module as a view/fragment.
+- [x] **Compose SDUI Motor:** Port the component catalog (Card, Text, Input, etc.) to **Jetpack Compose**.
+- [x] **Engine Switcher:** Implement a toggle to alternate between Flutter and Compose rendering flows.
 - [ ] **Method Channel (Native Side):**
     - Send the UI JSON to Flutter.
     - Receive captured data from Flutter.
-- [ ] **KMP Orchestration:** Call the `sharedLogic` (Kotlin) using the data received from Flutter.
-- [ ] **Native UI:** Build the result screen using **Jetpack Compose**.
-- [ ] **Error Handling:** Display validation messages and stay on the form if KMP returns an error.
+- [x] **KMP Orchestration:** Call the `sharedLogic` (Kotlin) using the data received from either engine.
+- [x] **Unified Error Handling:** Display validation messages in both engines based on KMP results.
 
 ## ⚪ Phase 5: Server & Documentation (`server`)
 **Objective:** Provide the remote multiplier and finalize deliverables.

@@ -34,6 +34,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.compose.runtime)
             implementation(libs.compose.components.resources)
         }
         commonTest.dependencies {

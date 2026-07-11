@@ -58,6 +58,7 @@ lib/
 ## 📱 Features
 - **Unified Logic:** Shared networking, data processing, and validation using KMP.
 - **Hybrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
+- **Dual SDUI Engines (Hybrid):** Implementation of an "Engine Switcher" that allows toggling between Flutter and Jetpack Compose for rendering the same JSON configuration.
 - **Native SDUI (Bonus):** Replicated rendering engine in Jetpack Compose and SwiftUI for full native performance and parity.
 - **Modular Design:** Feature-First Clean Architecture for high maintainability.
 - **Server Integration:** Ktor-based API for dynamic rate multipliers.
