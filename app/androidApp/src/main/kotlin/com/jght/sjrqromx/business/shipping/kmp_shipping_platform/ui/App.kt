@@ -12,20 +12,23 @@ import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quotin
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.ShippingType
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.usecase.CalculateQuoteUseCase
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.presentation.ComposeSduiRenderer
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 enum class UiEngine { FLUTTER, COMPOSE }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App() {
+fun App(
+    onFlutterEngineRequest: () -> Unit
+) {
     var currentEngine by remember { mutableStateOf(UiEngine.COMPOSE) }
     var currentJson by remember { mutableStateOf(QUOTING_UI_JSON) }
     var simulateNetworkError by remember { mutableStateOf(false) }
+    var isSwitching by remember { mutableStateOf(false) }
     val currentErrors = remember { mutableStateMapOf<String, String?>() }
     val scope = rememberCoroutineScope()
     
-    // Sincronización del servicio mock
     val tariffService = remember { MockTariffRemoteService() }
     val calculateQuoteUseCase = remember { CalculateQuoteUseCase(tariffService) }
 
@@ -66,13 +69,8 @@ fun App() {
                                             result.error.code.contains("ZIP") -> "codigoPostal"
                                             else -> ""
                                         }
-                                        
                                         if (fieldId.isNotEmpty()) {
                                             currentErrors[fieldId] = result.error.message
-                                        } else {
-                                            // Si es un error de red, mostramos un SnackBar o actualizamos el JSON
-                                            // Para esta prueba, lo inyectaremos como un componente de error al inicio
-                                            currentErrors["general"] = result.error.message
                                         }
                                     }
                                 }
@@ -89,8 +87,12 @@ fun App() {
                 }
                 UiEngine.FLUTTER -> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Flutter Engine Placeholder")
+                        CircularProgressIndicator()
+                        LaunchedEffect(Unit) {
+                            onFlutterEngineRequest()
+                            delay(500) // Pequeña espera para asegurar que la activity nativa gane el foco
+                            currentEngine = UiEngine.COMPOSE 
+                            isSwitching = false
                         }
                     }
                 }
@@ -110,14 +112,23 @@ fun App() {
                 }
                 Spacer(Modifier.height(8.dp))
                 SmallFloatingActionButton(
-                    onClick = { currentEngine = if (currentEngine == UiEngine.COMPOSE) UiEngine.FLUTTER else UiEngine.COMPOSE },
+                    onClick = { 
+                        if (!isSwitching) {
+                            isSwitching = true
+                            currentEngine = UiEngine.FLUTTER 
+                        }
+                    },
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(if (currentEngine == UiEngine.COMPOSE) "Switch to Flutter" else "Switch to Compose")
+                        if (isSwitching) {
+                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                        } else {
+                            Text("Switch to Flutter Engine")
+                        }
                     }
                 }
             }

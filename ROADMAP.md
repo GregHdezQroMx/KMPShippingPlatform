@@ -36,26 +36,24 @@
 
 ## 🟠 Phase 4: Native Android Host & Hybrid SDUI
 **Objective:** The "Future" architecture: Native Host + KMP Logic + Dual Rendering Engines.
-- [ ] **Flutter Integration:** Embed the Flutter UI module as a view/fragment.
-- [x] **Compose SDUI Motor:** Port the component catalog (Card, Text, Input, etc.) to **Jetpack Compose**.
-- [x] **Engine Switcher:** Implement a toggle to alternate between Flutter and Compose rendering flows.
-- [ ] **Method Channel (Native Side):**
-    - Send the UI JSON to Flutter.
-    - Receive captured data from Flutter.
-- [x] **KMP Orchestration:** Call the `sharedLogic` (Kotlin) using the data received from either engine.
-- [x] **Unified Error Handling:** Display validation messages in both engines based on KMP results.
+- [x] **Artifact Strategy**: Implemented `flutter_sdui_wrapper_4_kmp` to generate **AAR artifacts**, allowing KMP to consume Flutter as a pre-compiled binary.
+- [x] **Flutter Integration**: Embed the Flutter UI module via AAR consumption and pre-warmed `FlutterEngine`.
+- [x] **Compose SDUI Motor**: Port the component catalog (Card, Text, Input, etc.) to **Jetpack Compose**.
+- [x] **Engine Switcher**: Implement a toggle to alternate between Flutter and Compose rendering flows.
+- [x] **Method Channel (Native Side)**: Bidirectional communication between Kotlin and the Flutter AAR.
+- [x] **KMP Orchestration**: Call the `sharedLogic` (Kotlin) using the data received from either engine.
+- [x] **Unified Error Handling**: Display validation messages in both engines based on KMP results.
 
-## ⚪ Phase 5: Server & Documentation (`server`)
+## 🟣 Phase 5: Native iOS & SDUI Engines (Bonus / Future Proof)
+**Objective:** Expand to iOS and replicate the Flutter rendering logic in 100% Native Stacks.
+- [ ] **iOS Native Host:** Implementation of the native iOS host in SwiftUI consuming KMP and Flutter.
+- [ ] **SwiftUI SDUI Motor:** Implementation of the Component Catalog in SwiftUI.
+- [ ] **JSON Parity:** Ensure the same JSON renders identical UI across Flutter, Android, and iOS.
+
+## ⚪ Phase 6: Server & Documentation (`server`)
 **Objective:** Provide the remote multiplier and finalize deliverables.
 - [ ] **Ktor Endpoint:** Simple API that returns a dynamic multiplier for the "Remote Service" (Rule 7).
 - [ ] **README.md:** Finalize documentation (Architecture decisions, how to run, etc.).
-
-## 🟣 Phase 6: Native iOS & SDUI Engines (Bonus / Future Proof)
-**Objective:** Expand to iOS and replicate the Flutter rendering logic in 100% Native Stacks.
-- [ ] **iOS Native Host:** Implementation of the native iOS host in SwiftUI consuming KMP and Flutter.
-- [ ] **Compose SDUI Motor:** Implementation of the Component Catalog in Jetpack Compose.
-- [ ] **SwiftUI SDUI Motor:** Implementation of the Component Catalog in SwiftUI.
-- [ ] **JSON Parity:** Ensure the same JSON renders identical UI across Flutter, Android, and iOS.
 
 ## 🌟 Bonus / Desirable Features
 - [ ] **Full-Stack Logic Sharing:** Expose the KMP `CalculateQuoteUseCase` in the `:server` module as the final Source of Truth for price validation.

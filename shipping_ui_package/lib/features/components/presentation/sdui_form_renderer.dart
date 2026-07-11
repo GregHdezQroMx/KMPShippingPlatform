@@ -54,7 +54,7 @@ class _SDUIFormRendererState extends ConsumerState<SDUIFormRenderer> {
         leading: _screen.id != 'cotizador_envios' 
           ? IconButton(
               icon: const Icon(Icons.arrow_back), 
-              onPressed: () => UIBridgeHandler.sendEvent('RESET', {})
+              onPressed: () => UIBridgeHandler.sendEvent('CLOSE', {})
             )
           : null,
       ),

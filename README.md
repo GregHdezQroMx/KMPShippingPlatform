@@ -88,6 +88,21 @@ Unlike traditional hybrid apps, this implementation uses a **100% Server-Driven 
 
 ---
 
+## 🏗 Deployment Wrapper & Artifact Strategy (Senior Integration)
+
+To ensure a professional and decoupled integration between the **KMP Native Hosts** and the **Flutter UI Engine**, we implemented a **Deployment Wrapper Architecture**.
+
+### 📦 Why the `flutter_sdui_wrapper_4_kmp` module?
+In a real-world migration (like the one proposed for Liverpool), the native Android/iOS teams should not be required to have the Flutter SDK installed or handle Dart source code directly.
+1.  **Agnosticism**: The `shipping_ui_package` remains a pure Dart package, untouched and safe for the legacy environment.
+2.  **Binary Integration**: The wrapper module acts as a "delivery vehicle" that compiles the Dart package into **Native Artifacts**:
+    *   **Android**: Generates an **`.aar`** (Android Archive) and a local Maven repository.
+    *   **iOS**: Generates a **`.framework`** or **`XCFramework`**.
+3.  **Stability**: By consuming pre-compiled artifacts, the KMP Host apps achieve faster build times and are immune to changes in the Flutter development environment.
+4.  **Method Channel Contracts**: The wrapper defines the strict communication protocol (Channel Name: `com.jght.shipping/ui_engine`) that KMP uses to orchestrate the UI.
+
+---
+
 ## 🚛 Shipping Quote Engine (Business Rules)
 
 The core calculation logic (implemented in `CalculateQuoteUseCase`) follows these 7 mandatory rules:

@@ -131,6 +131,15 @@ fun getResultUiJson(
               "type": "submit",
               "event": "RESET"
             }
+          },
+          {
+            "type": "button",
+            "id": "close",
+            "label": "Cerrar y volver a Nativo",
+            "action": {
+              "type": "submit",
+              "event": "CLOSE"
+            }
           }
         ]
       }

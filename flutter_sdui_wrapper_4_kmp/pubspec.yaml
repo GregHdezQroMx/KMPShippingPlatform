@@ -1,0 +1,19 @@
+name: flutter_sdui_wrapper_4_kmp
+description: Deployment wrapper for SDUI engine to be consumed by KMP Native Hosts.
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shipping_ui_package:
+    path: ../shipping_ui_package
+  flutter_riverpod: ^2.5.1
+
+flutter:
+  module:
+    androidPackage: com.jght.sjrqromx.business.shipping.kmp_shipping_platform.sdui
+    iosBundleIdentifier: com.jght.sjrqromx.business.shipping.kmp-shipping-platform.sdui
