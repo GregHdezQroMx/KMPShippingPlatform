@@ -39,10 +39,13 @@ import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.resources.
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.resources.flutter_mode_title
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.resources.start_flutter_button
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings.UiEngine
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteErrorType
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteResult
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.ShippingType
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.presentation.viewmodel.ShippingViewModel
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.presentation.ComposeSduiRenderer
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.runtime.LaunchedEffect
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,53 +58,72 @@ fun App(
     var currentJson by remember { mutableStateOf(QUOTING_UI_JSON) }
     var showSettings by remember { mutableStateOf(false) }
     val currentErrors = remember { mutableStateMapOf<String, String?>() }
+    val quoteResult by viewModel.quoteResult.collectAsState()
+
+    // Manejo reactivo de errores de validación
+    LaunchedEffect(quoteResult) {
+        val result = quoteResult
+        if (result is QuoteResult.Error && result.error.type == QuoteErrorType.VALIDATION_ERROR) {
+            val fieldId = when {
+                result.error.code.contains("WEIGHT") -> "peso"
+                result.error.code.contains("DISTANCE") -> "distancia"
+                result.error.code.contains("ZIP") -> "codigoPostal"
+                else -> ""
+            }
+            if (fieldId.isNotEmpty()) {
+                currentErrors[fieldId] = result.error.message
+            }
+        }
+    }
 
     MaterialTheme {
-        if (showSettings) {
-            SettingsScreen(
-                currentEngine = settingsState.engine,
-                onEngineChange = { viewModel.updateEngine(it) },
-                isNetworkErrorEnabled = settingsState.simulateNetworkError,
-                onNetworkErrorChange = { viewModel.updateNetworkError(it) },
-                useRemoteServer = settingsState.useRemoteServer,
-                onDataSourceChange = { viewModel.updateDataSource(it) },
-                onBack = { showSettings = false }
-            )
-        } else {
-            Box(modifier = Modifier.fillMaxSize()) {
-                when (settingsState.engine) {
-                    UiEngine.COMPOSE -> {
-                        ComposeSduiRenderer(
-                            jsonString = currentJson,
-                            externalErrors = currentErrors,
-                            onOpenSettings = { showSettings = true },
-                            onAction = { event, data ->
-                                if (event == "COTIZAR_ENVIO") {
-                                    currentErrors.clear()
-                                    viewModel.calculateQuote(
-                                        weight = data["peso"]?.toDoubleOrNull() ?: 0.0,
-                                        distance = data["distancia"]?.toDoubleOrNull() ?: 0.0,
-                                        type = if (data["tipoEnvio"] == "EXPRESS") ShippingType.EXPRESS else ShippingType.STANDARD,
-                                        zipCode = data["codigoPostal"] ?: ""
-                                    )
-                                } else if (event == "RESET") {
-                                    currentErrors.clear()
-                                    currentJson = QUOTING_UI_JSON
-                                }
-                            },
-                            onReset = { 
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Main Content
+            when (settingsState.engine) {
+                UiEngine.COMPOSE -> {
+                    ComposeSduiRenderer(
+                        jsonString = currentJson,
+                        externalErrors = currentErrors,
+                        onOpenSettings = { showSettings = true },
+                        onAction = { event, data ->
+                            if (event == "COTIZAR_ENVIO") {
+                                val weight = data["peso"]?.toDoubleOrNull() ?: 0.0
+                                val distance = data["distancia"]?.toDoubleOrNull() ?: 0.0
+                                val type = if (data["tipoEnvio"] == "EXPRESS") ShippingType.EXPRESS else ShippingType.STANDARD
+                                val zipCode = data["codigoPostal"] ?: ""
+                                
                                 currentErrors.clear()
-                                currentJson = QUOTING_UI_JSON 
+                                viewModel.calculateQuote(weight, distance, type, zipCode)
+                            } else if (event == "RESET") {
+                                currentErrors.clear()
+                                currentJson = QUOTING_UI_JSON
                             }
-                        )
-                    }
-                    UiEngine.FLUTTER -> {
-                        FlutterLauncherScreen(
-                            onLaunch = onFlutterEngineRequest,
-                            onOpenSettings = { showSettings = true }
-                        )
-                    }
+                        },
+                        onReset = { 
+                            currentErrors.clear()
+                            currentJson = QUOTING_UI_JSON 
+                        }
+                    )
                 }
+                UiEngine.FLUTTER -> {
+                    FlutterLauncherScreen(
+                        onLaunch = onFlutterEngineRequest,
+                        onOpenSettings = { showSettings = true }
+                    )
+                }
+            }
+
+            // Settings Overlay
+            if (showSettings) {
+                SettingsScreen(
+                    currentEngine = settingsState.engine,
+                    onEngineChange = { viewModel.updateEngine(it) },
+                    isNetworkErrorEnabled = settingsState.simulateNetworkError,
+                    onNetworkErrorChange = { viewModel.updateNetworkError(it) },
+                    useRemoteServer = settingsState.useRemoteServer,
+                    onDataSourceChange = { viewModel.updateDataSource(it) },
+                    onBack = { showSettings = false }
+                )
             }
         }
     }

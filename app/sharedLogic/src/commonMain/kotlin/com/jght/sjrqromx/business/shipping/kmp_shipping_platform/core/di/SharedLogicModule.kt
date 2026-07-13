@@ -8,5 +8,5 @@ import org.koin.dsl.module
  * Módulo de Koin para implementaciones de servicios compartidos.
  */
 val sharedLogicModule = module {
-    single<TariffRemoteService> { MockTariffRemoteService() }
+    single<TariffRemoteService> { MockTariffRemoteService(get()) }
 }

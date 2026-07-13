@@ -1,12 +1,23 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -158,7 +169,14 @@ fun NativeResultScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Resultado Nativo") })
+            TopAppBar(
+                title = { Text("Resultado Nativo") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
         }
     ) { padding ->
         Column(
@@ -210,19 +228,33 @@ fun NativeResultScreen(
                         imageVector = androidx.compose.material.icons.Icons.Default.CloudOff,
                         contentDescription = null,
                         tint = androidx.compose.ui.graphics.Color.Red,
-                        modifier = androidx.compose.ui.Modifier.size(80.dp)
+                        modifier = androidx.compose.ui.Modifier.size(100.dp)
                     )
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(24.dp))
                     Text(
                         text = "¡Ups! Error de Negocio",
                         style = MaterialTheme.typography.headlineMedium,
-                        color = androidx.compose.ui.graphics.Color.Red
+                        color = androidx.compose.ui.graphics.Color.Red,
+                        fontWeight = FontWeight.Bold
                     )
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(12.dp))
                     Text(
                         text = result.error.message,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        color = Color.Gray
                     )
+                    
+                    // Si es un error de la Regla 7, podemos añadir más contexto
+                    if (result.error.code == "SERVICE_UNAVAILABLE") {
+                        Text(
+                            text = "El servidor no respondió a tiempo. Por favor, verifica tu conexión o intenta más tarde.",
+                            style = MaterialTheme.typography.bodySmall,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 8.dp),
+                            color = Color.LightGray
+                        )
+                    }
                 }
                 null -> {
                     CircularProgressIndicator()

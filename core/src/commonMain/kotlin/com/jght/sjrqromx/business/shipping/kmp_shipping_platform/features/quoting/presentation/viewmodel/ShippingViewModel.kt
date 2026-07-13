@@ -56,8 +56,15 @@ class ShippingViewModel(
                 shippingType = type,
                 destinationZipCode = zipCode
             )
-            _quoteResult.value = calculateQuoteUseCase(request)
-            _showNativeResult.value = true
+            val result = calculateQuoteUseCase(request)
+            _quoteResult.value = result
+            
+            // SOLO navegamos si es Éxito o Error de Red (Regla 7)
+            // Si es Error de Validación, NO activamos _showNativeResult
+            if (result is QuoteResult.Success || 
+                (result is QuoteResult.Error && result.error.type != com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteErrorType.VALIDATION_ERROR)) {
+                _showNativeResult.value = true
+            }
         }
     }
 

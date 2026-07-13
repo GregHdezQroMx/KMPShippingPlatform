@@ -1,7 +1,9 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.data.remote
 
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings.SettingsRepository
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.repository.TariffRemoteService
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlin.random.Random
 
 /**
@@ -14,11 +16,9 @@ data class ZoneConfig(
     val multiplier: Double
 )
 
-class MockTariffRemoteService : TariffRemoteService {
-
-    companion object {
-        var shouldFailGlobal: Boolean = false
-    }
+class MockTariffRemoteService(
+    private val settingsRepository: SettingsRepository
+) : TariffRemoteService {
 
     private val zoneConfigs = listOf(
         ZoneConfig("Local (Centro)", 0, 50, 1.0),
@@ -45,7 +45,8 @@ class MockTariffRemoteService : TariffRemoteService {
     override suspend fun getRemoteMultiplier(zipCode: String): Result<Double> {
         delay(800) // Latencia obligatoria Regla 7
 
-        if (shouldFailGlobal) {
+        val shouldFail = settingsRepository.settings.first().simulateNetworkError
+        if (shouldFail) {
             return Result.failure(Exception("TARIFAS_SERVICE_UNAVAILABLE"))
         }
 
