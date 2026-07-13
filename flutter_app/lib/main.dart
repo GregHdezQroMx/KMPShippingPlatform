@@ -1,34 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shipping_ui_package/shipping_ui_package.dart';
 import 'package:shipping_ui_package/features/components/presentation/providers/sdui_state_provider.dart';
+import 'package:shipping_ui_package/features/components/presentation/providers/form_state_provider.dart';
 import 'features/quoting/presentation/providers/quoting_provider.dart';
-import 'features/quoting/data/repository/mock_tariff_repository.dart';
 import 'features/quoting/domain/model/quote_models.dart';
 import 'shared/assets/ui_config.dart';
 
-void main() {
+// Provider para manejar la simulación de error de forma global y persistente
+final networkErrorSimulationProvider = StateProvider<bool>((ref) => false);
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final initialErrorValue = prefs.getBool('simulate_network_error') ?? false;
+  
   runApp(
-    const ProviderScope(
-      child: ShippingLegacyApp(),
+    ProviderScope(
+      overrides: [
+        networkErrorSimulationProvider.overrideWith((ref) => initialErrorValue),
+      ],
+      child: ShippingLegacyApp(prefs: prefs),
     ),
   );
 }
 
-class ShippingLegacyApp extends ConsumerStatefulWidget {
-  const ShippingLegacyApp({super.key});
+class ShippingLegacyApp extends ConsumerWidget {
+  final SharedPreferences prefs;
+  const ShippingLegacyApp({super.key, required this.prefs});
 
-  @override
-  ConsumerState<ShippingLegacyApp> createState() => _ShippingLegacyAppState();
-}
+  Future<void> _handleQuoteSubmit(WidgetRef ref, Map<String, dynamic> data) async {
+    // 0. Limpiamos errores previos
+    ref.read(sduiFormStateProvider.notifier).clearErrors();
 
-class _ShippingLegacyAppState extends ConsumerState<ShippingLegacyApp> {
-  bool _simulateNetworkError = false;
-
-  Future<void> _handleQuoteSubmit(Map<String, dynamic> data) async {
-    // 1. Sincronizamos el estado del simulador con el repositorio real
-    final repo = ref.read(tariffRepositoryProvider) as MockTariffRepository;
-    repo.shouldFail = _simulateNetworkError;
+    // 1. Sincronizamos el estado del simulador con el valor del provider
+    final isSimulatingError = ref.read(networkErrorSimulationProvider);
+    final repo = ref.read(tariffRepositoryProvider);
+    repo.shouldFail = isSimulatingError;
 
     // 2. Procesamos la solicitud
     final result = await ref.read(quotingProvider.notifier).processSubmit(data);
@@ -43,16 +52,43 @@ class _ShippingLegacyAppState extends ConsumerState<ShippingLegacyApp> {
       );
       ref.read(sduiStateProvider.notifier).updateJson(resultJson);
     } else if (result is QuoteError) {
-      final errorJson = getErrorUiJson(
-        message: result.message,
-        code: result.code,
-      );
-      ref.read(sduiStateProvider.notifier).updateJson(errorJson);
+      debugPrint('SDUI_ERROR: code=${result.code}, type=${result.type}');
+      
+      if (result.type == QuoteErrorType.validationError) {
+        // Errores de validación -> Inline en el campo (Consistencia con Android)
+        final fieldId = _mapErrorCodeToFieldId(result.code);
+        if (fieldId != null) {
+          ref.read(sduiFormStateProvider.notifier).setError(fieldId, result.message);
+        } else {
+          // Fallback por si acaso
+          ref.read(sduiStateProvider.notifier).updateJson(getErrorUiJson(
+            message: result.message,
+            code: result.code,
+          ));
+        }
+      } else {
+        // Errores de red/servicio (Switch Regla 7) -> Pantalla de error completa
+        final errorJson = getErrorUiJson(
+          message: result.message,
+          code: result.code,
+        );
+        ref.read(sduiStateProvider.notifier).updateJson(errorJson);
+      }
     }
   }
 
+  String? _mapErrorCodeToFieldId(String code) {
+    final normalizedCode = code.toUpperCase();
+    if (normalizedCode.contains('WEIGHT')) return 'peso';
+    if (normalizedCode.contains('DISTANCE')) return 'distancia';
+    if (normalizedCode.contains('ZIP')) return 'codigoPostal';
+    return null;
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final simulateError = ref.watch(networkErrorSimulationProvider);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Shipping Legacy (Dart)',
@@ -65,11 +101,13 @@ class _ShippingLegacyAppState extends ConsumerState<ShippingLegacyApp> {
           children: [
             SDUIEngineRoot(
               key: const ValueKey('shipping_root'),
-              initialJson: quotingUiJson, // Restauramos el JSON original completo
+              initialJson: quotingUiJson,
               onEvent: (event, data) {
+                debugPrint('SDUI_EVENT: $event with data: $data');
                 if (event == 'COTIZAR_ENVIO') {
-                  _handleQuoteSubmit(data);
-                } else if (event == 'RESET') {
+                  _handleQuoteSubmit(ref, data);
+                } else if (event == 'RESET' || event == 'CLOSE') {
+                  ref.read(sduiFormStateProvider.notifier).reset();
                   ref.read(sduiStateProvider.notifier).updateJson(quotingUiJson);
                 }
               },
@@ -88,8 +126,11 @@ class _ShippingLegacyAppState extends ConsumerState<ShippingLegacyApp> {
                     children: [
                       const Text('Simular Error Red', style: TextStyle(fontSize: 10)),
                       Switch(
-                        value: _simulateNetworkError,
-                        onChanged: (v) => setState(() => _simulateNetworkError = v),
+                        value: simulateError,
+                        onChanged: (value) {
+                          ref.read(networkErrorSimulationProvider.notifier).state = value;
+                          prefs.setBool('simulate_network_error', value);
+                        },
                       ),
                     ],
                   ),

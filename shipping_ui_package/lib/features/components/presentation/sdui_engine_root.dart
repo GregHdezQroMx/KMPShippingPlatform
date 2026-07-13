@@ -34,6 +34,20 @@ class _SDUIEngineRootState extends ConsumerState<SDUIEngineRoot> {
   }
 
   @override
+  void didUpdateWidget(SDUIEngineRoot oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Solo actualizamos si el handler cambia. 
+    // Usamos WidgetsBinding para evitar actualizar el provider DURANTE el build.
+    if (widget.onEvent != oldWidget.onEvent && widget.onEvent != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(sduiStateProvider.notifier).setEventHandler(widget.onEvent!);
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Escuchamos el estado global para actualizaciones reactivas
     final stateJson = ref.watch(sduiStateProvider.select((s) => s.json));

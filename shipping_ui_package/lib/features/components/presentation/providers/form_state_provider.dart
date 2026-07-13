@@ -39,6 +39,10 @@ class FormStateNotifier extends StateNotifier<FormValuesState> {
   void clearErrors() {
     state = state.copyWith(errors: {});
   }
+
+  void reset() {
+    state = FormValuesState();
+  }
 }
 
 final sduiFormStateProvider =

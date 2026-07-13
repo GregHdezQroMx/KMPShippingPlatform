@@ -47,6 +47,10 @@ build/
 **/*.bundle
 **/*.so
 **/*.log
+**/*.filecache
+**/*.a
+**/*.dylib
+**/*.framework
 
 # Specific ignores for this project structure
 flutter_app/build/

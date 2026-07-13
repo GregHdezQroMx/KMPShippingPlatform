@@ -48,8 +48,15 @@ class SDUIFormRenderer extends ConsumerWidget {
             ? IconButton(
                 icon: const Icon(Icons.arrow_back), 
                 onPressed: () {
+                  debugPrint('SDUI_NAV: Back pressed for screen ${screen.id}');
                   final onEvent = ref.read(sduiStateProvider).onEvent;
-                  if (onEvent != null) onEvent('CLOSE', {});
+                  if (onEvent != null) {
+                    onEvent('CLOSE', {});
+                  } else {
+                    debugPrint('SDUI_NAV_ERROR: No event handler found');
+                    // Fallback: Si no hay handler, intentamos resetear el estado localmente
+                    ref.read(sduiStateProvider.notifier).updateJson('{}');
+                  }
                 }
               )
             : null,

@@ -8,7 +8,7 @@ const String quotingUiJson = '''
         "type": "image",
         "id": "banner",
         "label": "Banner",
-        "imageUrl": "https://raw.githubusercontent.com/flutter/website/main/src/assets/images/shared/brand/flutter/logo/flutter-lockup.png"
+        "imageUrl": "https://storage.googleapis.com/cms-storage-bucket/0dbfcc7a59cd1cf10282.png"
       },
       {
         "type": "text",
