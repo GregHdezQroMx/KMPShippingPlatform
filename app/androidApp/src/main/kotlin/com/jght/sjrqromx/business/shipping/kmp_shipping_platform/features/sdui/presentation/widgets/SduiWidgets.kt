@@ -24,6 +24,7 @@ fun SduiTextComponent(component: SDUIComponent) {
         "subtitle" -> MaterialTheme.typography.titleMedium.copy(color = Color.Gray)
         "price" -> MaterialTheme.typography.headlineLarge.copy(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.ExtraBold)
         "error" -> MaterialTheme.typography.bodySmall.copy(color = Color.Red)
+        "caption" -> MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
         else -> MaterialTheme.typography.bodyLarge
     }
     Text(
@@ -148,6 +149,8 @@ fun SduiIconComponent(component: SDUIComponent) {
     val icon = when (component.iconName) {
         "check_circle" -> Icons.Default.CheckCircle
         "local_shipping" -> Icons.Default.LocalShipping
+        "error_outline" -> Icons.Default.ErrorOutline
+        "cloud_off" -> Icons.Default.CloudOff
         "error" -> Icons.Default.Error
         "info" -> Icons.Default.Info
         else -> Icons.Default.Help

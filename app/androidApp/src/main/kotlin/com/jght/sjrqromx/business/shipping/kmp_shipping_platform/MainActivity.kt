@@ -4,15 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.bridge.AndroidSduiBridge
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.data.remote.MockTariffRemoteService
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteRequest
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteResult
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.ShippingType
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.usecase.CalculateQuoteUseCase
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.App
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.QUOTING_UI_JSON
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.getResultUiJson
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.*
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
@@ -23,9 +24,16 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     
+    companion object {
+        var sduiBridge: AndroidSduiBridge? = null
+    }
+    
     private var flutterEngine: FlutterEngine? = null
-    private var sduiBridge: AndroidSduiBridge? = null
     private val scope = CoroutineScope(Dispatchers.Main)
+    
+    // ESTADO NATIVO PARA EL RESULTADO
+    private var quoteResultState by mutableStateOf<QuoteResult?>(null)
+    private var showNativeResult by mutableStateOf(false)
     
     private val calculateQuoteUseCase = CalculateQuoteUseCase(MockTariffRemoteService())
 
@@ -33,26 +41,36 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         
-        // Inicializamos el motor en el Main Thread pero después del primer frame de Compose
-        // para evitar el ANR inicial.
         setupFlutterEngine()
 
         setContent {
-            App(
-                onFlutterEngineRequest = { 
-                    startActivity(
-                        FlutterActivity
+            if (showNativeResult) {
+                // PANTALLA DE RESULTADO 100% NATIVA (COMPOSE)
+                NativeResultScreen(
+                    result = quoteResultState,
+                    onBack = { 
+                        showNativeResult = false
+                        quoteResultState = null
+                    }
+                )
+            } else {
+                App(
+                    onFlutterEngineRequest = { 
+                        val intent = io.flutter.embedding.android.FlutterActivity
                             .withCachedEngine("sdui_engine")
                             .build(this)
-                    )
-                }
-            )
+                        
+                        intent.setClass(this, SduiFlutterActivity::class.java)
+                        startActivity(intent)
+                    }
+                )
+            }
         }
     }
 
     private fun setupFlutterEngine() {
-        // Flutter REQUIERE ejecutarse en el Main Thread
         val engine = FlutterEngine(this)
+        flutterEngine = engine
         
         engine.dartExecutor.executeDartEntrypoint(
             DartExecutor.DartEntrypoint.createDefault()
@@ -62,28 +80,26 @@ class MainActivity : ComponentActivity() {
             .getInstance()
             .put("sdui_engine", engine)
 
-        // 4. Instanciar el Bridge de KMP y conectarlo al motor
         val bridge = AndroidSduiBridge(engine.dartExecutor.binaryMessenger)
         sduiBridge = bridge
         
-        bridge.setOnFinishListener {
-            finish() // Cierra la actividad si Flutter lo solicita
-        }
-
-        // MAGIA: Inyectamos el JSON inicial apenas el motor está listo
-        bridge.renderUI(QUOTING_UI_JSON)
-
-        // 5. Configurar el escuchador de eventos (KMP Orchestration)
         bridge.setOnEventListener { event, data ->
-            if (event == "COTIZAR_ENVIO") {
-                handleQuoteFromFlutter(data)
-            } else if (event == "RESET") {
-                bridge.renderUI(QUOTING_UI_JSON)
+            when (event) {
+                "ENGINE_READY" -> {
+                    bridge.renderUI(QUOTING_UI_JSON)
+                }
+                "COTIZAR_ENVIO" -> {
+                    bridge.finishFlow()
+                    handleQuoteNative(data)
+                }
+                "RESET" -> {
+                    bridge.renderUI(QUOTING_UI_JSON)
+                }
             }
         }
     }
 
-    private fun handleQuoteFromFlutter(data: Map<String, Any?>) {
+    private fun handleQuoteNative(data: Map<String, Any?>) {
         scope.launch {
             val request = QuoteRequest(
                 weightKg = data["peso"]?.toString()?.toDoubleOrNull() ?: 0.0,
@@ -92,25 +108,14 @@ class MainActivity : ComponentActivity() {
                 destinationZipCode = data["codigoPostal"]?.toString() ?: ""
             )
 
-            val result = calculateQuoteUseCase(request)
-            
-            if (result is QuoteResult.Success) {
-                val resultJson = getResultUiJson(
-                    price = "%.2f".format(result.data.finalPrice),
-                    days = result.data.estimatedDays.toString(),
-                    type = result.data.details.shippingType.name,
-                    foreign = if (result.data.details.foreignZoneApplied) "Sí" else "No",
-                    special = if (result.data.details.specialHandlingApplied) "Sí" else "No"
-                )
-                sduiBridge?.renderUI(resultJson)
-            } else if (result is QuoteResult.Error) {
-                sduiBridge?.showValidationError(result.error.code, result.error.message)
-            }
+            quoteResultState = calculateQuoteUseCase(request)
+            showNativeResult = true
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         flutterEngine?.destroy()
+        flutterEngine = null
     }
 }

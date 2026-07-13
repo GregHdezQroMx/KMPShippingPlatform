@@ -14,9 +14,11 @@ data class ZoneConfig(
     val multiplier: Double
 )
 
-class MockTariffRemoteService(
-    var shouldFail: Boolean = false
-) : TariffRemoteService {
+class MockTariffRemoteService : TariffRemoteService {
+
+    companion object {
+        var shouldFailGlobal: Boolean = false
+    }
 
     private val zoneConfigs = listOf(
         ZoneConfig("Local (Centro)", 0, 50, 1.0),
@@ -43,7 +45,7 @@ class MockTariffRemoteService(
     override suspend fun getRemoteMultiplier(zipCode: String): Result<Double> {
         delay(800) // Latencia obligatoria Regla 7
 
-        if (shouldFail) {
+        if (shouldFailGlobal) {
             return Result.failure(Exception("TARIFAS_SERVICE_UNAVAILABLE"))
         }
 

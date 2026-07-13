@@ -9,6 +9,15 @@ import kotlin.math.ceil
 class CalculateQuoteUseCase(
     private val tariffService: TariffRemoteService
 ) {
+    private suspend fun safeGetString(resource: org.jetbrains.compose.resources.StringResource): String {
+        return try {
+            getString(resource)
+        } catch (_: Throwable) {
+            // Fallback para pruebas unitarias donde el motor de recursos no está inicializado
+            resource.toString() 
+        }
+    }
+
     suspend operator fun invoke(request: QuoteRequest): QuoteResult {
         // Regla 5: Validaciones de negocio
         if (request.weightKg <= 0) {
@@ -16,7 +25,7 @@ class CalculateQuoteUseCase(
                 QuoteError(
                     type = QuoteErrorType.VALIDATION_ERROR, 
                     code = "INVALID_WEIGHT", 
-                    message = getString(Res.string.invalid_weight)
+                    message = safeGetString(Res.string.invalid_weight)
                 )
             )
         }
@@ -25,7 +34,7 @@ class CalculateQuoteUseCase(
                 QuoteError(
                     type = QuoteErrorType.VALIDATION_ERROR, 
                     code = "INVALID_DISTANCE", 
-                    message = getString(Res.string.invalid_distance)
+                    message = safeGetString(Res.string.invalid_distance)
                 )
             )
         }
@@ -36,7 +45,7 @@ class CalculateQuoteUseCase(
                 QuoteError(
                     type = QuoteErrorType.VALIDATION_ERROR,
                     code = "INVALID_ZIP",
-                    message = getString(Res.string.invalid_zip)
+                    message = safeGetString(Res.string.invalid_zip)
                 )
             )
         }
@@ -49,7 +58,7 @@ class CalculateQuoteUseCase(
                 QuoteError(
                     type = QuoteErrorType.REMOTE_SERVICE_ERROR,
                     code = "TARIFAS_SERVICE_UNAVAILABLE",
-                    message = getString(Res.string.service_unavailable)
+                    message = safeGetString(Res.string.service_unavailable)
                 )
             )
         }

@@ -33,7 +33,7 @@ fun App(
     val calculateQuoteUseCase = remember { CalculateQuoteUseCase(tariffService) }
 
     LaunchedEffect(simulateNetworkError) {
-        tariffService.shouldFail = simulateNetworkError
+        MockTariffRemoteService.shouldFailGlobal = simulateNetworkError
     }
 
     MaterialTheme {
@@ -69,8 +69,14 @@ fun App(
                                             result.error.code.contains("ZIP") -> "codigoPostal"
                                             else -> ""
                                         }
+                                        
                                         if (fieldId.isNotEmpty()) {
                                             currentErrors[fieldId] = result.error.message
+                                        } else {
+                                            currentJson = getErrorUiJson(
+                                                message = result.error.message,
+                                                code = result.error.code
+                                            )
                                         }
                                     }
                                 }
@@ -90,7 +96,7 @@ fun App(
                         CircularProgressIndicator()
                         LaunchedEffect(Unit) {
                             onFlutterEngineRequest()
-                            delay(500) // Pequeña espera para asegurar que la activity nativa gane el foco
+                            delay(500)
                             currentEngine = UiEngine.COMPOSE 
                             isSwitching = false
                         }
@@ -98,7 +104,7 @@ fun App(
                 }
             }
 
-            // Controles flotantes
+            // Controles flotantes originales
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)

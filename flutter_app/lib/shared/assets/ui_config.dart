@@ -137,3 +137,60 @@ String getResultUiJson({
   }
 }
 ''';
+
+String getErrorUiJson({
+  required String message,
+  required String code,
+}) =>
+    '''
+{
+  "screen": {
+    "id": "error_envio",
+    "title": "Error en Cotización",
+    "components": [
+      {
+        "type": "card",
+        "id": "error_card",
+        "label": "Card",
+        "children": [
+          {
+            "type": "icon",
+            "id": "error_icon",
+            "label": "Icon",
+            "iconName": "cloud_off",
+            "style": "error"
+          },
+          {
+            "type": "text",
+            "id": "error_title",
+            "label": "¡Servicio No Disponible!",
+            "style": "headline"
+          },
+          {
+            "type": "text",
+            "id": "error_message",
+            "label": "$message",
+            "style": "body"
+          },
+          {
+            "type": "text",
+            "id": "error_code",
+            "label": "Referencia: $code",
+            "style": "caption"
+          },
+          {
+            "type": "button",
+            "id": "reset",
+            "label": "Intentar de nuevo",
+            "style": "primary",
+            "action": {
+              "type": "submit",
+              "event": "RESET"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+''';

@@ -16,5 +16,9 @@ subprojects {
         google()
         mavenCentral()
         maven { url = uri("https://storage.googleapis.com/download.flutter.io") }
+        // Flutter AAR Local Repository
+        maven { 
+            url = uri("${rootProject.projectDir}/flutter_sdui_wrapper_4_kmp/build/host/outputs/repo")
+        }
     }
 }

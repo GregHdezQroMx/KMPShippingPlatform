@@ -12,12 +12,16 @@ class SDUIScreen {
   });
 
   factory SDUIScreen.fromJson(Map<String, dynamic> json) {
-    final screen = json['screen'] ?? {};
+    // Si el JSON viene envuelto en "screen", lo abrimos aquí mismo
+    final Map<String, dynamic> data = json.containsKey('screen') 
+        ? Map<String, dynamic>.from(json['screen']) 
+        : json;
+
     return SDUIScreen(
-      id: screen['id'] ?? '',
-      title: screen['title'] ?? '',
-      components: (screen['components'] as List?)
-              ?.map((e) => SDUIComponent.fromJson(e))
+      id: data['id'] ?? '',
+      title: data['title'] ?? 'Sin Título',
+      components: (data['components'] as List?)
+              ?.map((e) => SDUIComponent.fromJson(Map<String, dynamic>.from(e)))
               .toList() ??
           [],
     );

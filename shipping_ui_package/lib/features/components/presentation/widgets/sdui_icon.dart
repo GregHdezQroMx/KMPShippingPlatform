@@ -10,19 +10,6 @@ class SDUIIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = component.iconName ?? '';
 
-    // Smart Handler: URL vs Name
-    if (name.startsWith('http')) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Image.network(
-          name,
-          width: 64,
-          height: 64,
-          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 64),
-        ),
-      );
-    }
-
     IconData icon;
     Color color;
 
@@ -34,7 +21,9 @@ class SDUIIcon extends StatelessWidget {
         icon = Icons.local_shipping;
         break;
       case 'error':
-        icon = Icons.error;
+      case 'error_outline':
+      case 'cloud_off': // Fallback visual para errores de red
+        icon = Icons.error_outline;
         break;
       case 'info':
         icon = Icons.info;

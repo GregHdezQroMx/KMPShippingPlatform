@@ -12,93 +12,90 @@ import 'widgets/sdui_image.dart';
 import 'widgets/sdui_card.dart';
 import 'widgets/sdui_icon.dart';
 import '../../actions/domain/action_handler.dart';
-import '../../../core/bridge/ui_bridge_handler.dart';
+import 'providers/sdui_state_provider.dart';
 
-class SDUIFormRenderer extends ConsumerStatefulWidget {
+class SDUIFormRenderer extends ConsumerWidget {
   final String json;
-
   const SDUIFormRenderer({super.key, required this.json});
 
   @override
-  ConsumerState<SDUIFormRenderer> createState() => _SDUIFormRendererState();
-}
-
-class _SDUIFormRendererState extends ConsumerState<SDUIFormRenderer> {
-  late SDUIScreen _screen;
-
-  @override
-  void initState() {
-    super.initState();
-    _parseJson();
-  }
-
-  @override
-  void didUpdateWidget(SDUIFormRenderer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.json != widget.json) {
-      _parseJson();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final trimmedJson = json.trim();
+    
+    if (trimmedJson.isEmpty || trimmedJson == '{}') {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
-  }
 
-  void _parseJson() {
-    setState(() {
-      _screen = SDUIScreen.fromJson(jsonDecode(widget.json));
-    });
-  }
+    try {
+      final decoded = jsonDecode(trimmedJson);
+      if (decoded == null || decoded is! Map) {
+        throw const FormatException('Invalid JSON structure');
+      }
+      
+      final screen = SDUIScreen.fromJson(Map<String, dynamic>.from(decoded));
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_screen.title),
-        leading: _screen.id != 'cotizador_envios' 
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back), 
-              onPressed: () => UIBridgeHandler.sendEvent('CLOSE', {})
-            )
-          : null,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: _screen.components.map((comp) => _buildComponent(comp)).toList(),
+      return Scaffold(
+        backgroundColor: Colors.white, // Fondo consistente
+        appBar: AppBar(
+          title: Text(screen.title),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          leading: screen.id != 'cotizador_envios' 
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back), 
+                onPressed: () {
+                  final onEvent = ref.read(sduiStateProvider).onEvent;
+                  if (onEvent != null) onEvent('CLOSE', {});
+                }
+              )
+            : null,
         ),
-      ),
-    );
-  }
-
-  Widget _buildComponent(SDUIComponent component) {
-    switch (component.type) {
-      case ComponentType.textInput:
-        return SDUITextInput(component: component);
-      case ComponentType.select:
-        return SDUISelect(component: component);
-      case ComponentType.button:
-        return SDUIButton(
-          component: component,
-          onPressed: () => _handleAction(component.action),
-        );
-      case ComponentType.text:
-        return SDUIText(component: component);
-      case ComponentType.image:
-        return SDUIImage(component: component);
-      case ComponentType.card:
-        return SDUICard(
-          component: component,
-          childBuilder: _buildComponent,
-        );
-      case ComponentType.icon:
-        return SDUIIcon(component: component);
-      default:
-        return const SizedBox.shrink();
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: screen.components.map((comp) => _buildComponent(comp, ref)).toList(),
+          ),
+        ),
+      );
+    } catch (e, stack) {
+      debugPrint('SDUI_RENDER_ERROR: $e');
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 40),
+            const SizedBox(height: 16),
+            Text('Error: $e', style: const TextStyle(fontSize: 12)),
+          ],
+        ),
+      );
     }
   }
 
-  void _handleAction(Map<String, dynamic>? action) {
-    if (action == null) return;
-
-    final formData = ref.read(sduiFormStateProvider).values;
-    SDUIActionHandler.handle(action, formData);
+  Widget _buildComponent(SDUIComponent component, WidgetRef ref) {
+    switch (component.type) {
+      case ComponentType.textInput: return SDUITextInput(component: component);
+      case ComponentType.select: return SDUISelect(component: component);
+      case ComponentType.button: 
+        return SDUIButton(
+          component: component, 
+          onPressed: () {
+            if (component.action != null) {
+              final formData = ref.read(sduiFormStateProvider).values;
+              SDUIActionHandler.handle(component.action!, formData, ref);
+            }
+          }
+        );
+      case ComponentType.text: return SDUIText(component: component);
+      case ComponentType.image: return SDUIImage(component: component);
+      case ComponentType.card: return SDUICard(component: component, childBuilder: (c) => _buildComponent(c, ref));
+      case ComponentType.icon: return SDUIIcon(component: component);
+      default: return const SizedBox.shrink();
+    }
   }
 }

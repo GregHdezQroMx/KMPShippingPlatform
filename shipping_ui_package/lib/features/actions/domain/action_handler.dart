@@ -1,22 +1,27 @@
-import '../../../core/bridge/ui_bridge_handler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../components/presentation/providers/sdui_state_provider.dart';
 
 class SDUIActionHandler {
-  static void handle(Map<String, dynamic> action, Map<String, dynamic> formData) {
+  static void handle(
+    Map<String, dynamic> action, 
+    Map<String, dynamic> formData,
+    WidgetRef ref
+  ) {
     final String type = action['type'] ?? '';
 
     switch (type) {
       case 'submit':
-        _handleSubmit(action, formData);
+        _handleSubmit(action, formData, ref);
         break;
       case 'navigate':
-        _handleNavigation(action);
+        _handleNavigation(action, ref);
         break;
       default:
         print('Unknown action type: $type');
     }
   }
 
-  static void _handleSubmit(Map<String, dynamic> action, Map<String, dynamic> formData) {
+  static void _handleSubmit(Map<String, dynamic> action, Map<String, dynamic> formData, WidgetRef ref) {
     final String event = action['event'] ?? 'SUBMIT';
     final List<String> fields = List<String>.from(action['fields'] ?? []);
 
@@ -25,11 +30,18 @@ class SDUIActionHandler {
       dataToSubmit[field] = formData[field];
     }
 
-    UIBridgeHandler.sendEvent(event, dataToSubmit);
+    // El motor ya no llama al bridge, llama al callback del estado (Agnóstico)
+    final onEvent = ref.read(sduiStateProvider).onEvent;
+    if (onEvent != null) {
+      onEvent(event, dataToSubmit);
+    }
   }
 
-  static void _handleNavigation(Map<String, dynamic> action) {
+  static void _handleNavigation(Map<String, dynamic> action, WidgetRef ref) {
     final String route = action['route'] ?? '';
-    UIBridgeHandler.sendEvent('NAVIGATE', {'route': route});
+    final onEvent = ref.read(sduiStateProvider).onEvent;
+    if (onEvent != null) {
+      onEvent('NAVIGATE', {'route': route});
+    }
   }
 }

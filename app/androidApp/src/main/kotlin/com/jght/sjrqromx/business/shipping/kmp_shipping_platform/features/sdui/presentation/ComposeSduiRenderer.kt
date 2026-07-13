@@ -41,14 +41,12 @@ fun ComposeSduiRenderer(
 
     val formValues = remember { mutableStateMapOf<String, String>() }
 
-    // Limpiamos los valores si el JSON vuelve a ser el inicial (Reset)
     LaunchedEffect(jsonString) {
         if (jsonString.contains("cotizador_envios")) {
             formValues.clear()
         }
     }
 
-    // Usamos directamente el mapa de errores pasado para que Compose detecte los cambios
     val formErrors = externalErrors
 
     Scaffold(

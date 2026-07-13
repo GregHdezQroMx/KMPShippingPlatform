@@ -1,5 +1,17 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteResult
+
 const val QUOTING_UI_JSON = """
 {
   "screen": {
@@ -131,14 +143,162 @@ fun getResultUiJson(
               "type": "submit",
               "event": "RESET"
             }
+          }
+        ]
+      }
+    ]
+  }
+}
+"""
+
+@Composable
+fun NativeResultScreen(
+    result: QuoteResult?,
+    onBack: () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("Resultado Nativo") })
+        }
+    ) { padding ->
+        Column(
+            modifier = androidx.compose.ui.Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(24.dp),
+            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            when (result) {
+                is QuoteResult.Success -> {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = androidx.compose.ui.graphics.Color(0xFF4CAF50),
+                        modifier = androidx.compose.ui.Modifier.size(80.dp)
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = "¡Cotización Exitosa!",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "$${"%.2f".format(result.data.finalPrice)} MXN",
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.ExtraBold
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Tiempo estimado: ${result.data.estimatedDays} días",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = androidx.compose.ui.graphics.Color.Gray
+                    )
+                    
+                    HorizontalDivider(Modifier.padding(vertical = 24.dp))
+                    
+                    Column(Modifier.fillMaxWidth()) {
+                        DetailRow("Tipo de envío", result.data.details.shippingType.name)
+                        DetailRow("Zona Foránea", if (result.data.details.foreignZoneApplied) "Sí" else "No")
+                        DetailRow("Manejo Especial", if (result.data.details.specialHandlingApplied) "Sí" else "No")
+                    }
+                }
+                is QuoteResult.Error -> {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.CloudOff,
+                        contentDescription = null,
+                        tint = androidx.compose.ui.graphics.Color.Red,
+                        modifier = androidx.compose.ui.Modifier.size(80.dp)
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = "¡Ups! Error de Negocio",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = androidx.compose.ui.graphics.Color.Red
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = result.error.message,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+                null -> {
+                    CircularProgressIndicator()
+                }
+            }
+            
+            Spacer(Modifier.height(32.dp))
+            Button(
+                onClick = onBack,
+                modifier = Modifier.fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+            ) {
+                Text("Nueva Cotización", modifier = Modifier.padding(8.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun DetailRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = label, color = androidx.compose.ui.graphics.Color.Gray)
+        Text(text = value, fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
+    }
+}
+
+fun getErrorUiJson(
+    message: String,
+    code: String
+): String = """
+{
+  "screen": {
+    "id": "error_envio",
+    "title": "Error en Cotización",
+    "components": [
+      {
+        "type": "card",
+        "id": "error_card",
+        "label": "Card",
+        "children": [
+          {
+            "type": "icon",
+            "id": "error_icon",
+            "label": "Icon",
+            "iconName": "cloud_off",
+            "style": "error"
+          },
+          {
+            "type": "text",
+            "id": "error_title",
+            "label": "¡Servicio No Disponible!",
+            "style": "headline"
+          },
+          {
+            "type": "text",
+            "id": "error_message",
+            "label": "$message",
+            "style": "body"
+          },
+          {
+            "type": "text",
+            "id": "error_code",
+            "label": "Referencia: $code",
+            "style": "caption"
           },
           {
             "type": "button",
-            "id": "close",
-            "label": "Cerrar y volver a Nativo",
+            "id": "reset",
+            "label": "Intentar de nuevo",
+            "style": "primary",
             "action": {
               "type": "submit",
-              "event": "CLOSE"
+              "event": "RESET"
             }
           }
         ]

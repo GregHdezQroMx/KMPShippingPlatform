@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shipping_ui_package/shipping_ui_package.dart';
+import 'package:shipping_ui_package/features/components/presentation/providers/sdui_state_provider.dart';
 import 'features/quoting/presentation/providers/quoting_provider.dart';
 import 'features/quoting/data/repository/mock_tariff_repository.dart';
 import 'features/quoting/domain/model/quote_models.dart';
@@ -25,22 +25,12 @@ class ShippingLegacyApp extends ConsumerStatefulWidget {
 class _ShippingLegacyAppState extends ConsumerState<ShippingLegacyApp> {
   bool _simulateNetworkError = false;
 
-  @override
-  void initState() {
-    super.initState();
-    
-    UIBridgeHandler.standaloneHandler = (event, data) async {
-      if (event == 'COTIZAR_ENVIO') {
-        final repo = ref.read(tariffRepositoryProvider) as MockTariffRepository;
-        repo.shouldFail = _simulateNetworkError;
-        await _handleQuoteSubmit(data);
-      } else if (event == 'RESET') {
-        UIBridgeHandler.simulateNativeCall('renderUI', quotingUiJson);
-      }
-    };
-  }
-
   Future<void> _handleQuoteSubmit(Map<String, dynamic> data) async {
+    // 1. Sincronizamos el estado del simulador con el repositorio real
+    final repo = ref.read(tariffRepositoryProvider) as MockTariffRepository;
+    repo.shouldFail = _simulateNetworkError;
+
+    // 2. Procesamos la solicitud
     final result = await ref.read(quotingProvider.notifier).processSubmit(data);
 
     if (result is QuoteSuccess) {
@@ -51,12 +41,13 @@ class _ShippingLegacyAppState extends ConsumerState<ShippingLegacyApp> {
         foreign: result.data.details.foreignZoneApplied ? 'Sí' : 'No',
         special: result.data.details.specialHandlingApplied ? 'Sí' : 'No',
       );
-      UIBridgeHandler.simulateNativeCall('renderUI', resultJson);
+      ref.read(sduiStateProvider.notifier).updateJson(resultJson);
     } else if (result is QuoteError) {
-      UIBridgeHandler.simulateNativeCall('showValidationError', {
-        'code': result.code,
-        'message': result.message,
-      });
+      final errorJson = getErrorUiJson(
+        message: result.message,
+        code: result.code,
+      );
+      ref.read(sduiStateProvider.notifier).updateJson(errorJson);
     }
   }
 
@@ -72,12 +63,22 @@ class _ShippingLegacyAppState extends ConsumerState<ShippingLegacyApp> {
       home: Scaffold(
         body: Stack(
           children: [
-            const SDUIEngineRoot(initialJson: quotingUiJson),
+            SDUIEngineRoot(
+              key: const ValueKey('shipping_root'),
+              initialJson: quotingUiJson, // Restauramos el JSON original completo
+              onEvent: (event, data) {
+                if (event == 'COTIZAR_ENVIO') {
+                  _handleQuoteSubmit(data);
+                } else if (event == 'RESET') {
+                  ref.read(sduiStateProvider.notifier).updateJson(quotingUiJson);
+                }
+              },
+            ),
             Positioned(
               bottom: 20,
               right: 20,
               child: Material(
-                color: Colors.white,
+                color: Colors.white.withOpacity(0.9),
                 elevation: 4,
                 borderRadius: BorderRadius.circular(20),
                 child: Padding(
