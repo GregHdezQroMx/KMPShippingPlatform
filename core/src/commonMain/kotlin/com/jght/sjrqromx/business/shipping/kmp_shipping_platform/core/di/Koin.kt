@@ -5,7 +5,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
 
 /**
- * Inicialización de Koin para todas las plataformas.
+ * Koin initialization for all platforms.
  */
 fun initKoin(
     appDeclaration: KoinAppDeclaration = {},
@@ -16,6 +16,6 @@ fun initKoin(
 }
 
 /**
- * Sobrecarga para iOS (Swift no maneja bien argumentos por defecto en algunos casos).
+ * Overload for iOS (Swift doesn't handle default arguments well in some cases).
  */
 fun initKoin() = initKoin(appDeclaration = {}, platformModules = emptyList())

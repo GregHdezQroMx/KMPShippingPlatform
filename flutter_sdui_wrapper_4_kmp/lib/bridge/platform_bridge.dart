@@ -21,7 +21,7 @@ class PlatformBridge {
           final String code = args['code'] ?? '';
           final String message = args['message'] ?? '';
           
-          // Mapeamos el código de error de KMP al ID del campo en el motor SDUI
+          // We map the KMP error code to the field ID in the SDUI engine
           String fieldId = '';
           if (code.contains('WEIGHT')) fieldId = 'peso';
           if (code.contains('DISTANCE')) fieldId = 'distancia';
@@ -35,7 +35,7 @@ class PlatformBridge {
       return null;
     });
 
-    // Avisamos que el Wrapper está listo para el handshake nativo
+    // We notify that the Wrapper is ready for the native handshake
     _channel.invokeMethod('onUIEvent', {
       'event': 'ENGINE_READY',
       'data': {},

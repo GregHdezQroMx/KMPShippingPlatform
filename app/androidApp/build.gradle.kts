@@ -60,8 +60,8 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.koin.viewmodel)
     
-    // Flutter SDUI Wrapper (AAR) y Engine
-    // Usamos implementation para asegurar visibilidad en el IDE
+    // Flutter SDUI Wrapper (AAR) and Engine
+    // We use implementation to ensure visibility in the IDE
     implementation("com.jght.sjrqromx.business.shipping.kmp_shipping_platform.sdui:flutter_debug:1.0")
     implementation("io.flutter:flutter_embedding_debug:1.0.0-83675ed27633283e7fc296c8bca22e841224c096")
     implementation("io.flutter:arm64_v8a_debug:1.0.0-83675ed27633283e7fc296c8bca22e841224c096")

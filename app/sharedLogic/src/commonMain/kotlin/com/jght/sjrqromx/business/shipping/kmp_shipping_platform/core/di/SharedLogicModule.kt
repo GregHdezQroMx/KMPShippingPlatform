@@ -5,7 +5,7 @@ import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quotin
 import org.koin.dsl.module
 
 /**
- * Módulo de Koin para implementaciones de servicios compartidos.
+ * Koin module for shared service implementations.
  */
 val sharedLogicModule = module {
     single<TariffRemoteService> { MockTariffRemoteService(get()) }

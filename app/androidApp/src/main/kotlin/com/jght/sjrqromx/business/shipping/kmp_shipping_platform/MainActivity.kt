@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
     
     private var flutterEngine: FlutterEngine? = null
     
-    // Inyectamos el ViewModel centralizado vía Koin
+    // We inject the centralized ViewModel via Koin
     private val viewModel: ShippingViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,13 +43,13 @@ class MainActivity : ComponentActivity() {
             val quoteResult by viewModel.quoteResult.collectAsState()
 
             if (showNativeResult) {
-                // PANTALLA DE RESULTADO 100% NATIVA (COMPOSE)
+                // 100% NATIVE RESULT SCREEN (COMPOSE)
                 NativeResultScreen(
                     result = quoteResult,
                     onBack = { 
                         viewModel.resetQuote()
-                        // Quitamos el auto-launch. Al resetear, regresamos a la pantalla principal de App.kt
-                        // donde el usuario puede elegir entrar a Flutter o ir a ajustes.
+                        // We remove auto-launch. When resetting, we return to the main screen of App.kt
+                        // where the user can choose to enter Flutter or go to settings.
                     }
                 )
             } else {
@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
                     val type = if (data["tipoEnvio"] == "EXPRESS") ShippingType.EXPRESS else ShippingType.STANDARD
                     val zipCode = data["codigoPostal"]?.toString() ?: ""
 
-                    // Delegamos todo al ViewModel
+                    // We delegate everything to the ViewModel
                     viewModel.calculateQuote(weight, distance, type, zipCode)
                 }
                 "RESET" -> {
@@ -112,10 +112,10 @@ class MainActivity : ComponentActivity() {
                         result.error.type == com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteErrorType.VALIDATION_ERROR
                     
                     if (isValidationError) {
-                        // Si es error de validación y estamos en Flutter, notificamos al bridge
+                        // If it is a validation error and we are in Flutter, we notify the bridge
                         sduiBridge?.showValidationError(result.error.code, result.error.message)
                     } else {
-                        // Si es éxito o error de red, cerramos Flutter (el resultado se verá nativo)
+                        // If it is success or network error, we close Flutter (the result will be shown natively)
                         sduiBridge?.finishFlow()
                     }
                 }

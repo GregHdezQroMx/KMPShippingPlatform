@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
- * Repositorio encargado de la gestión de la configuración de la plataforma.
- * Es agnóstico a la plataforma gracias a KMP.
+ * Repository in charge of platform settings management.
+ * It is platform-agnostic thanks to KMP.
  */
 class SettingsRepository(private val dataStore: DataStore<Preferences>) {
 
@@ -21,7 +21,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     }
 
     /**
-     * Expone la configuración actual de forma reactiva.
+     * Exposes current settings reactively.
      */
     val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
         AppSettings(
@@ -36,7 +36,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     }
 
     /**
-     * Actualiza el motor de UI predeterminado.
+     * Updates the default UI engine.
      */
     suspend fun updateEngine(engine: UiEngine) {
         dataStore.edit { prefs ->
@@ -45,7 +45,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     }
 
     /**
-     * Alterna la simulación de error de red.
+     * Toggles network error simulation.
      */
     suspend fun updateNetworkError(enabled: Boolean) {
         dataStore.edit { prefs ->
@@ -54,7 +54,7 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     }
 
     /**
-     * Alterna el origen de datos (Mock vs Server).
+     * Toggles data source (Mock vs Server).
      */
     suspend fun updateDataSource(useRemote: Boolean) {
         dataStore.edit { prefs ->

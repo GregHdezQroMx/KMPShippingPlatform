@@ -25,7 +25,7 @@ class CalculateQuoteUseCase {
       );
     }
 
-    // Validación de CP (Añadida para robustez)
+    // Zip Code validation (Added for robustness)
     if (request.destinationZipCode.length != 5 || int.tryParse(request.destinationZipCode) == null) {
       return QuoteError(
         type: QuoteErrorType.validationError,

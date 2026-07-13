@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
 }
 
-// Resolución dinámica del motor de Flutter para evitar fricción al evaluador
+// Dynamic resolution of the Flutter engine to avoid evaluation friction
 val flutterEngineHash: String by lazy {
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
@@ -14,13 +14,13 @@ val flutterEngineHash: String by lazy {
         localProperties.load(localPropertiesFile.inputStream())
     }
     val flutterSdk = localProperties.getProperty("flutter.sdk") 
-        ?: "/opt/homebrew/share/flutter" // Fallback común en macOS
+        ?: "/opt/homebrew/share/flutter" // Common fallback on macOS
     
     val engineVersionFile = file("$flutterSdk/bin/internal/engine.version")
     if (engineVersionFile.exists()) {
         engineVersionFile.readText().trim()
     } else {
-        "83675ed27633283e7fc296c8bca22e841224c096" // Ultimo hash conocido
+        "83675ed27633283e7fc296c8bca22e841224c096" // Last known hash
     }
 }
 
@@ -58,7 +58,7 @@ kotlin {
             implementation(libs.koin.core)
         }
         androidMain.dependencies {
-            // Vinculación dinámica binaria del motor de Flutter
+            // Dynamic binary linking of the Flutter engine
             implementation("io.flutter:flutter_embedding_debug:1.0.0-$flutterEngineHash")
         }
         commonTest.dependencies {

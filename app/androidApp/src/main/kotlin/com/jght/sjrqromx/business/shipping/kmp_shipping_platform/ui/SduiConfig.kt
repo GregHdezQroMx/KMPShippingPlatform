@@ -245,7 +245,7 @@ fun NativeResultScreen(
                         color = Color.Gray
                     )
                     
-                    // Si es un error de la Regla 7, podemos añadir más contexto
+                    // If it is a Rule 7 error, we can add more context
                     if (result.error.code == "SERVICE_UNAVAILABLE") {
                         Text(
                             text = "El servidor no respondió a tiempo. Por favor, verifica tu conexión o intenta más tarde.",

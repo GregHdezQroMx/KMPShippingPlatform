@@ -8,7 +8,7 @@ import 'features/quoting/presentation/providers/quoting_provider.dart';
 import 'features/quoting/domain/model/quote_models.dart';
 import 'shared/assets/ui_config.dart';
 
-// Provider para manejar la simulación de error de forma global y persistente
+// Provider to handle network error simulation globally and persistently
 final networkErrorSimulationProvider = StateProvider<bool>((ref) => false);
 
 void main() async {
@@ -55,7 +55,7 @@ class ShippingLegacyApp extends ConsumerWidget {
       debugPrint('SDUI_ERROR: code=${result.code}, type=${result.type}');
       
       if (result.type == QuoteErrorType.validationError) {
-        // Errores de validación -> Inline en el campo (Consistencia con Android)
+        // Validation errors -> Inline field error (Consistency with Android)
         final fieldId = _mapErrorCodeToFieldId(result.code);
         if (fieldId != null) {
           ref.read(sduiFormStateProvider.notifier).setError(fieldId, result.message);

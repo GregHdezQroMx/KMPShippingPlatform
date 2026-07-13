@@ -18,7 +18,7 @@ class SDUIButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
       child: SizedBox(
-        width: double.infinity, // Hacemos que el botón ocupe todo el ancho
+        width: double.infinity, // We make the button occupy the full width
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),

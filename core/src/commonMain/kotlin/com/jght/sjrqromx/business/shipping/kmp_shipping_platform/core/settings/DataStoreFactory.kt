@@ -4,17 +4,17 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 
 /**
- * Abstracción multiplataforma para la creación de DataStore.
+ * Cross-platform abstraction for DataStore creation.
  */
 expect class DataStoreFactory {
     /**
-     * Crea una instancia de DataStore<Preferences> nativa.
+     * Creates a native DataStore<Preferences> instance.
      */
     fun create(): DataStore<Preferences>
 }
 
 /**
- * Constantes para las llaves de persistencia.
+ * Constants for persistence keys.
  */
 object SettingKeys {
     const val DATASTORE_FILE_NAME = "shipping_platform.preferences_pb"

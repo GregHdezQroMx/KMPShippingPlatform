@@ -38,7 +38,7 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.androidx.datastore.preferences)
             
-            // Koin y ViewModel
+            // Koin and ViewModel
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.viewmodel)

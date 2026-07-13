@@ -22,7 +22,7 @@ class _SDUIEngineRootState extends ConsumerState<SDUIEngineRoot> {
   void initState() {
     super.initState();
     // Sincronizamos el estado de Riverpod en segundo plano, 
-    // pero el build NO dependerá de esto para el primer render.
+    // but the build WILL NOT depend on this for the first render.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ref.read(sduiStateProvider.notifier).updateJson(widget.initialJson);

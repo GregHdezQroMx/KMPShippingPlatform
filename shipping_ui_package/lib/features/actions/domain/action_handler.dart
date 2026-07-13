@@ -30,7 +30,7 @@ class SDUIActionHandler {
       dataToSubmit[field] = formData[field];
     }
 
-    // El motor ya no llama al bridge, llama al callback del estado (Agnóstico)
+    // The engine no longer calls the bridge, it calls the state callback (Agnostic)
     final onEvent = ref.read(sduiStateProvider).onEvent;
     if (onEvent != null) {
       onEvent(event, dataToSubmit);

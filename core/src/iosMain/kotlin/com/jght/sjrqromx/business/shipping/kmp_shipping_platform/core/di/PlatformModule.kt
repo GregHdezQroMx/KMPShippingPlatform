@@ -4,7 +4,7 @@ import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings.D
 import org.koin.dsl.module
 
 /**
- * Módulo de Koin específico para iOS.
+ * Koin module specific to iOS.
  */
 val platformModule = module {
     single { 

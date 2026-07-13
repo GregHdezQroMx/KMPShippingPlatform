@@ -10,10 +10,10 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 /**
- * Módulo de Koin compartido para UseCases, Repositorios y ViewModels.
+ * Shared Koin module for UseCases, Repositories and ViewModels.
  */
 val commonModule = module {
-    // Repositorios
+    // Repositories
     singleOf(::SettingsRepository)
 
     // UseCases
@@ -24,6 +24,6 @@ val commonModule = module {
 }
 
 /**
- * Función de conveniencia para agrupar todos los módulos compartidos.
+ * Convenience function to group all shared modules.
  */
 fun sharedModules() = listOf(commonModule)

@@ -17,15 +17,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
- * Orquestador central de la plataforma (Shared ViewModel).
- * Maneja tanto la persistencia de configuración como la lógica de cotización.
+ * Central orchestrator of the platform (Shared ViewModel).
+ * Manages both settings persistence and quoting logic.
  */
 class ShippingViewModel(
     private val calculateQuoteUseCase: CalculateQuoteUseCase,
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    // Configuración persistente (DataStore)
+    // Persistent settings (DataStore)
     val settings: StateFlow<AppSettings> = settingsRepository.settings
         .stateIn(
             scope = viewModelScope,
@@ -33,7 +33,7 @@ class ShippingViewModel(
             initialValue = AppSettings()
         )
 
-    // Estado de la cotización nativa
+    // Native quote state
     private val _quoteResult = MutableStateFlow<QuoteResult?>(null)
     val quoteResult: StateFlow<QuoteResult?> = _quoteResult.asStateFlow()
 
@@ -41,7 +41,7 @@ class ShippingViewModel(
     val showNativeResult: StateFlow<Boolean> = _showNativeResult.asStateFlow()
 
     /**
-     * Ejecuta el cálculo de cotización (KMP logic).
+     * Executes the quote calculation (KMP logic).
      */
     fun calculateQuote(
         weight: Double,
@@ -59,8 +59,8 @@ class ShippingViewModel(
             val result = calculateQuoteUseCase(request)
             _quoteResult.value = result
             
-            // SOLO navegamos si es Éxito o Error de Red (Regla 7)
-            // Si es Error de Validación, NO activamos _showNativeResult
+            // ONLY navigate if it is Success or Network Error (Rule 7)
+            // If it is a Validation Error, we DO NOT activate _showNativeResult
             if (result is QuoteResult.Success || 
                 (result is QuoteResult.Error && result.error.type != com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteErrorType.VALIDATION_ERROR)) {
                 _showNativeResult.value = true
@@ -69,14 +69,14 @@ class ShippingViewModel(
     }
 
     /**
-     * Resetea el flujo de cotización.
+     * Resets the quote flow.
      */
     fun resetQuote() {
         _quoteResult.value = null
         _showNativeResult.value = false
     }
 
-    // Acciones de configuración
+    // Configuration actions
     fun updateEngine(engine: UiEngine) {
         viewModelScope.launch { settingsRepository.updateEngine(engine) }
     }

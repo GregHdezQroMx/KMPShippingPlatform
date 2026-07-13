@@ -3,7 +3,7 @@ package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings
 import kotlinx.serialization.Serializable
 
 /**
- * Fuente única de verdad para los motores de UI disponibles.
+ * Single source of truth for available UI engines.
  */
 @Serializable
 enum class UiEngine {
@@ -11,7 +11,7 @@ enum class UiEngine {
 }
 
 /**
- * Modelo de datos para la configuración de la plataforma.
+ * Data model for platform settings.
  */
 @Serializable
 data class AppSettings(

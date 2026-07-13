@@ -8,8 +8,8 @@ class SduiFlutterActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Usamos el Bridge centralizado de MainActivity
-        // para escuchar el evento de cierre mientras ESTA actividad es la que está arriba
+        // We use the centralized Bridge from MainActivity
+        // to listen for the close event while THIS activity is on top
         MainActivity.sduiBridge?.setOnFinishListener {
             finish() 
         }

@@ -12,7 +12,7 @@ class SDUIScreen {
   });
 
   factory SDUIScreen.fromJson(Map<String, dynamic> json) {
-    // Si el JSON viene envuelto en "screen", lo abrimos aquí mismo
+    // If the JSON is wrapped in "screen", we open it here
     final Map<String, dynamic> data = json.containsKey('screen') 
         ? Map<String, dynamic>.from(json['screen']) 
         : json;

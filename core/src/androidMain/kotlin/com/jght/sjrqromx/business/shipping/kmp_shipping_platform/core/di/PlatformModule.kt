@@ -5,14 +5,14 @@ import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings.S
 import org.koin.dsl.module
 
 /**
- * Módulo de Koin específico para Android.
- * Provee dependencias que requieren Contexto.
+ * Koin module specific to Android.
+ * Provides dependencies that require Context.
  */
 val platformModule = module {
     single { 
         DataStoreFactory(context = get()).create() 
     }
     
-    // Gestor de preferencias nativo (Android)
+    // Native settings manager (Android)
     single { SettingsManager(context = get()) }
 }

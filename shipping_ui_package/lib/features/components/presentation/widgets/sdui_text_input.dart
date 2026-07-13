@@ -32,7 +32,7 @@ class _SDUITextInputState extends ConsumerState<SDUITextInput> {
   Widget build(BuildContext context) {
     final error = ref.watch(sduiFormStateProvider.select((s) => s.errors[widget.component.id]));
     
-    // Escuchar cambios en el valor para sincronizar el controlador (especialmente útil en RESET)
+    // Listen for value changes to synchronize the controller (especially useful on RESET)
     ref.listen(sduiFormStateProvider.select((s) => s.values[widget.component.id]), (prev, next) {
       final newValue = next?.toString() ?? '';
       if (_controller.text != newValue) {

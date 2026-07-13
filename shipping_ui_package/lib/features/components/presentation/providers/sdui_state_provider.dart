@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// El estado global del motor SDUI (Agnóstico)
+/// The global state of the SDUI engine (Agnostic)
 class SDUIState {
   final String json;
   final Function(String event, Map<String, dynamic> data)? onEvent;

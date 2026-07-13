@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlin.random.Random
 
 /**
- * Configuración de zona tarifaria basada en distancia a CDMX
+ * Tariff zone configuration based on distance to CDMX.
  */
 data class ZoneConfig(
     val name: String,
@@ -28,22 +28,22 @@ class MockTariffRemoteService(
     )
 
     /**
-     * Simulador de distancia basada en CPs Mexicanos reales
+     * Distance simulator based on real Mexican Zip Codes.
      */
     private fun getDistanceToCDMX(zipCode: String): Int {
         val cpInt = zipCode.toIntOrNull() ?: 0
         return when {
             cpInt in 1000..16999 -> 10   // CDMX (01000 - 16999)
-            cpInt in 76000..76999 -> 160  // Querétaro
+            cpInt in 76000..76999 -> 160  // Queretaro
             cpInt in 64000..64999 -> 900  // Monterrey
-            cpInt in 97000..97999 -> 1300 // Mérida
+            cpInt in 97000..97999 -> 1300 // Merida
             cpInt in 22000..22999 -> 2300 // Tijuana
-            else -> 350                   // Valor nacional promedio
+            else -> 350                   // Average national value
         }
     }
 
     override suspend fun getRemoteMultiplier(zipCode: String): Result<Double> {
-        delay(800) // Latencia obligatoria Regla 7
+        delay(800) // Mandatory latency Rule 7
 
         val shouldFail = settingsRepository.settings.first().simulateNetworkError
         if (shouldFail) {
@@ -53,7 +53,7 @@ class MockTariffRemoteService(
         val distance = getDistanceToCDMX(zipCode)
         val config = zoneConfigs.find { distance in it.minDistanceKm..it.maxDistanceKm }
         
-        // Aplicamos el multiplicador base de la zona + una pequeña variación aleatoria (dinamismo)
+        // Apply base zone multiplier + small random variation (dynamism)
         val baseMultiplier = config?.multiplier ?: 2.5
         val dynamicVariation = (Random.nextDouble() * 0.1) // 0.0 a 0.1
         

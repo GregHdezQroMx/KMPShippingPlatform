@@ -11,7 +11,7 @@ data class Shipment(
     val destination: String,
     val status: ShipmentStatus,
     val estimatedArrival: String,
-    val quote: QuoteResponse? = null // Relación con la cotización
+    val quote: QuoteResponse? = null // Link to the quote
 )
 
 @Serializable

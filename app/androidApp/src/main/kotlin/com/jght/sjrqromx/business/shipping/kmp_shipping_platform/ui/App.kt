@@ -60,7 +60,7 @@ fun App(
     val currentErrors = remember { mutableStateMapOf<String, String?>() }
     val quoteResult by viewModel.quoteResult.collectAsState()
 
-    // Manejo reactivo de errores de validación
+    // Reactive validation error handling
     LaunchedEffect(quoteResult) {
         val result = quoteResult
         if (result is QuoteResult.Error && result.error.type == QuoteErrorType.VALIDATION_ERROR) {

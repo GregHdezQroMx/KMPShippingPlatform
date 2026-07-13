@@ -7,8 +7,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 
 /**
- * Implementación de Android para la creación de DataStore.
- * Requiere el contexto de la aplicación.
+ * Android implementation for DataStore creation.
+ * Requires the application context.
  */
 actual class DataStoreFactory(private val context: Context) {
     actual fun create(): DataStore<Preferences> {
