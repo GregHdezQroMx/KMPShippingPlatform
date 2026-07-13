@@ -46,13 +46,20 @@
 - [x] **Stabilization & UX Parity**: Improved SDUI engine lifecycle (event handler persistence), deep form reset logic, and segregated error handling (inline validations vs full-screen service errors).
 - [x] **KMP Infra Fixes**: Resolved `DataStoreFactory` actual declarations for JVM and iOS targets to ensure cross-platform consistency.
 
-## 🟣 Phase 5: Native iOS & SDUI Engines (Bonus / Future Proof)
+## 🟣 Phase 5: SDUI Schema Optimization (Architectural Scaling)
+**Objective:** Eliminate the "God Class" anti-pattern in `SDUIComponent` by implementing a polymorphic schema.
+- [ ] **Polymorphic Refactoring:** Transform `SDUIComponent` into a `sealed class` hierarchy in `:core`.
+- [ ] **Component Specialization:** Implement type-safe sub-classes (Image, Text, Input, Container, Button) with specific attributes.
+- [ ] **Polymorphic Serialization:** Configure `kotlinx.serialization` with a class discriminator (`type`) for automatic de-serialization.
+- [ ] **Renderer Update:** Refactor Compose and Flutter renderers to leverage type-safe models instead of optional property checks.
+
+## 🟤 Phase 6: Native iOS & SDUI Engines (Bonus / Future Proof)
 **Objective:** Expand to iOS and replicate the Flutter rendering logic in 100% Native Stacks.
 - [ ] **iOS Native Host:** Implementation of the native iOS host in SwiftUI consuming KMP and Flutter.
 - [ ] **SwiftUI SDUI Motor:** Implementation of the Component Catalog in SwiftUI.
 - [ ] **JSON Parity:** Ensure the same JSON renders identical UI across Flutter, Android, and iOS.
 
-## ⚪ Phase 6: Server & Documentation (`server`)
+## ⚪ Phase 7: Server & Documentation (`server`)
 **Objective:** Provide the remote multiplier and finalize deliverables.
 - [ ] **Ktor Endpoint:** Simple API that returns a dynamic multiplier for the "Remote Service" (Rule 7).
 - [ ] **README.md:** Finalize documentation (Architecture decisions, how to run, etc.).
