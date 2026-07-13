@@ -4,23 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.bridge.AndroidSduiBridge
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.data.remote.MockTariffRemoteService
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteRequest
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteResult
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings.SettingsManager
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings.UiEngine
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.ShippingType
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.usecase.CalculateQuoteUseCase
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.presentation.viewmodel.ShippingViewModel
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.*
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     
@@ -29,13 +26,10 @@ class MainActivity : ComponentActivity() {
     }
     
     private var flutterEngine: FlutterEngine? = null
-    private val scope = CoroutineScope(Dispatchers.Main)
     
-    // ESTADO NATIVO PARA EL RESULTADO
-    private var quoteResultState by mutableStateOf<QuoteResult?>(null)
-    private var showNativeResult by mutableStateOf(false)
-    
-    private val calculateQuoteUseCase = CalculateQuoteUseCase(MockTariffRemoteService())
+    // Inyectamos el ViewModel centralizado vía Koin
+    private val viewModel: ShippingViewModel by viewModel()
+    private val settings: SettingsManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -44,28 +38,38 @@ class MainActivity : ComponentActivity() {
         setupFlutterEngine()
 
         setContent {
+            val showNativeResult by viewModel.showNativeResult.collectAsState()
+            val quoteResult by viewModel.quoteResult.collectAsState()
+            val currentSettings by viewModel.settings.collectAsState()
+
             if (showNativeResult) {
                 // PANTALLA DE RESULTADO 100% NATIVA (COMPOSE)
                 NativeResultScreen(
-                    result = quoteResultState,
+                    result = quoteResult,
                     onBack = { 
-                        showNativeResult = false
-                        quoteResultState = null
+                        viewModel.resetQuote()
+                        // Si el motor persistente es Flutter, lo relanzamos
+                        if (currentSettings.engine == UiEngine.FLUTTER) {
+                            launchFlutter()
+                        }
                     }
                 )
             } else {
                 App(
-                    onFlutterEngineRequest = { 
-                        val intent = io.flutter.embedding.android.FlutterActivity
-                            .withCachedEngine("sdui_engine")
-                            .build(this)
-                        
-                        intent.setClass(this, SduiFlutterActivity::class.java)
-                        startActivity(intent)
-                    }
+                    settings = settings,
+                    onFlutterEngineRequest = { launchFlutter() }
                 )
             }
         }
+    }
+
+    private fun launchFlutter() {
+        val intent = FlutterActivity
+            .withCachedEngine("sdui_engine")
+            .build(this)
+        
+        intent.setClass(this, SduiFlutterActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setupFlutterEngine() {
@@ -90,26 +94,17 @@ class MainActivity : ComponentActivity() {
                 }
                 "COTIZAR_ENVIO" -> {
                     bridge.finishFlow()
-                    handleQuoteNative(data)
+                    viewModel.calculateQuote(
+                        weight = data["peso"]?.toString()?.toDoubleOrNull() ?: 0.0,
+                        distance = data["distancia"]?.toString()?.toDoubleOrNull() ?: 0.0,
+                        type = if (data["tipoEnvio"] == "EXPRESS") ShippingType.EXPRESS else ShippingType.STANDARD,
+                        zipCode = data["codigoPostal"]?.toString() ?: ""
+                    )
                 }
                 "RESET" -> {
                     bridge.renderUI(QUOTING_UI_JSON)
                 }
             }
-        }
-    }
-
-    private fun handleQuoteNative(data: Map<String, Any?>) {
-        scope.launch {
-            val request = QuoteRequest(
-                weightKg = data["peso"]?.toString()?.toDoubleOrNull() ?: 0.0,
-                distanceKm = data["distancia"]?.toString()?.toDoubleOrNull() ?: 0.0,
-                shippingType = if (data["tipoEnvio"] == "EXPRESS") ShippingType.EXPRESS else ShippingType.STANDARD,
-                destinationZipCode = data["codigoPostal"]?.toString() ?: ""
-            )
-
-            quoteResultState = calculateQuoteUseCase(request)
-            showNativeResult = true
         }
     }
 

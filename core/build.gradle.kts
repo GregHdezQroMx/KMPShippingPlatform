@@ -37,6 +37,12 @@ kotlin {
             implementation(libs.compose.runtime)
             implementation(libs.compose.components.resources)
             implementation(libs.androidx.datastore.preferences)
+            
+            // Koin y ViewModel
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.viewmodel)
+            implementation(libs.androidx.lifecycle.runtimeCompose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

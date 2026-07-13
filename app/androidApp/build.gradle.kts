@@ -53,6 +53,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
     implementation("androidx.compose.material:material-icons-extended:1.7.5")
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.viewmodel)
     
     // Flutter SDUI Wrapper (AAR) y Engine
     // Usamos implementation para asegurar visibilidad en el IDE

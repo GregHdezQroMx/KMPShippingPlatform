@@ -55,6 +55,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.core)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.koin.core)
         }
         androidMain.dependencies {
             // Vinculación dinámica binaria del motor de Flutter
