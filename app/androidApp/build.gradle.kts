@@ -50,6 +50,7 @@ dependencies {
     implementation(projects.app.sharedLogic)
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.material3)
+    implementation(libs.compose.components.resources)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
     implementation("androidx.compose.material:material-icons-extended:1.7.5")

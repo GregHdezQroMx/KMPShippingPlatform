@@ -5,4 +5,9 @@
     <string name="success_title">¡Cotización Exitosa!</string>
     <string name="estimated_time">Tiempo estimado: %d días</string>
     <string name="invalid_zip">El código postal debe tener 5 dígitos</string>
+    <string name="flutter_engine_title">Motor Dart/Flutter</string>
+    <string name="config_desc">Configuración</string>
+    <string name="flutter_mode_title">Estás en modo Dart/Flutter</string>
+    <string name="flutter_mode_desc">La captura de datos se realizará en el motor de Dart.</string>
+    <string name="start_flutter_button">Iniciar Cotización en Flutter</string>
 </resources>

@@ -1,12 +1,25 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.presentation
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIComponent
@@ -20,7 +33,8 @@ fun ComposeSduiRenderer(
     jsonString: String,
     externalErrors: Map<String, String?> = emptyMap(),
     onAction: (String, Map<String, String>) -> Unit,
-    onReset: () -> Unit
+    onReset: () -> Unit,
+    onOpenSettings: () -> Unit
 ) {
     val sduiScreen = remember(jsonString) {
         try {
@@ -58,6 +72,14 @@ fun ComposeSduiRenderer(
                         IconButton(onClick = onReset) {
                             Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                         }
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Settings"
+                        )
                     }
                 }
             )
