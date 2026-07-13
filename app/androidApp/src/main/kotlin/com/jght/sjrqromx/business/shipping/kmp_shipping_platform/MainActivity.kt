@@ -7,16 +7,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.bridge.AndroidSduiBridge
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings.SettingsManager
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.settings.UiEngine
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.ShippingType
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.presentation.viewmodel.ShippingViewModel
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.*
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.App
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.NativeResultScreen
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.QUOTING_UI_JSON
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
     
     // Inyectamos el ViewModel centralizado vía Koin
     private val viewModel: ShippingViewModel by viewModel()
-    private val settings: SettingsManager by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -56,7 +55,6 @@ class MainActivity : ComponentActivity() {
                 )
             } else {
                 App(
-                    settings = settings,
                     onFlutterEngineRequest = { launchFlutter() }
                 )
             }
