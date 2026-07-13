@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../parser/domain/models/sdui_component.dart';
 
 class SDUIButton extends StatelessWidget {
-  final SDUIComponent component;
+  final SDUIButtonComponent component;
   final VoidCallback onPressed;
 
   const SDUIButton({

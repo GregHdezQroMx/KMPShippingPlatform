@@ -2,22 +2,18 @@ import 'package:flutter/material.dart';
 import '../../../parser/domain/models/sdui_component.dart';
 
 class SDUIImage extends StatelessWidget {
-  final SDUIComponent component;
+  final SDUIImageComponent component;
 
   const SDUIImage({super.key, required this.component});
 
   @override
   Widget build(BuildContext context) {
-    if (component.imageUrl == null || component.imageUrl!.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(12.0),
         child: Image.network(
-          component.imageUrl!,
+          component.imageUrl,
           height: 150,
           fit: BoxFit.contain,
           loadingBuilder: (context, child, loadingProgress) {

@@ -1,7 +1,5 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.presentation.widgets
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -18,7 +16,7 @@ import coil.compose.AsyncImage
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIComponent
 
 @Composable
-fun SduiTextComponent(component: SDUIComponent) {
+fun SduiTextComponent(component: SDUIComponent.Text) {
     val style = when (component.style) {
         "headline" -> MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
         "subtitle" -> MaterialTheme.typography.titleMedium.copy(color = Color.Gray)
@@ -36,7 +34,7 @@ fun SduiTextComponent(component: SDUIComponent) {
 
 @Composable
 fun SduiTextInputComponent(
-    component: SDUIComponent,
+    component: SDUIComponent.TextInput,
     formValues: MutableMap<String, String>,
     formErrors: Map<String, String?>
 ) {
@@ -58,12 +56,12 @@ fun SduiTextInputComponent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SduiSelectComponent(
-    component: SDUIComponent,
+    component: SDUIComponent.Select,
     formValues: MutableMap<String, String>
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { 
-        mutableStateOf(component.options?.find { it.value == formValues[component.id] } ?: component.options?.firstOrNull()) 
+        mutableStateOf(component.options.find { it.value == formValues[component.id] } ?: component.options.firstOrNull()) 
     }
 
     LaunchedEffect(selectedOption) {
@@ -89,7 +87,7 @@ fun SduiSelectComponent(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            component.options?.forEach { option ->
+            component.options.forEach { option ->
                 DropdownMenuItem(
                     text = { Text(option.label) },
                     onClick = {
@@ -103,7 +101,7 @@ fun SduiSelectComponent(
 }
 
 @Composable
-fun SduiButtonComponent(component: SDUIComponent, onClick: () -> Unit) {
+fun SduiButtonComponent(component: SDUIComponent.Button, onClick: () -> Unit) {
     val isPrimary = component.style == "primary" || component.id == "submit"
     Button(
         onClick = onClick,
@@ -117,8 +115,7 @@ fun SduiButtonComponent(component: SDUIComponent, onClick: () -> Unit) {
 }
 
 @Composable
-fun SduiImageComponent(component: SDUIComponent) {
-    if (component.imageUrl.isNullOrEmpty()) return
+fun SduiImageComponent(component: SDUIComponent.Image) {
     AsyncImage(
         model = component.imageUrl,
         contentDescription = component.label,
@@ -131,13 +128,13 @@ fun SduiImageComponent(component: SDUIComponent) {
 }
 
 @Composable
-fun SduiCardComponent(component: SDUIComponent, childBuilder: @Composable (SDUIComponent) -> Unit) {
+fun SduiCardComponent(component: SDUIComponent.Card, childBuilder: @Composable (SDUIComponent) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            component.children?.forEach { child ->
+            component.children.forEach { child ->
                 childBuilder(child)
             }
         }
@@ -145,7 +142,7 @@ fun SduiCardComponent(component: SDUIComponent, childBuilder: @Composable (SDUIC
 }
 
 @Composable
-fun SduiIconComponent(component: SDUIComponent) {
+fun SduiIconComponent(component: SDUIComponent.Icon) {
     val icon = when (component.iconName) {
         "check_circle" -> Icons.Default.CheckCircle
         "local_shipping" -> Icons.Default.LocalShipping

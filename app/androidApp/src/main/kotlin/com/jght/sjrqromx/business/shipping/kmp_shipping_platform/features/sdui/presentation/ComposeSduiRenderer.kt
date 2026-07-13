@@ -22,8 +22,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIComponent
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIScreenContainer
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.*
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.presentation.widgets.*
 import kotlinx.serialization.json.Json
 
@@ -112,13 +111,13 @@ fun SduiComponentResolver(
     formErrors: Map<String, String?>,
     onAction: (String, Map<String, String>) -> Unit
 ) {
-    when (component.type) {
-        "text" -> SduiTextComponent(component)
-        "text_input" -> SduiTextInputComponent(component, formValues, formErrors)
-        "select" -> SduiSelectComponent(component, formValues)
-        "button" -> SduiButtonComponent(component) {
+    when (component) {
+        is SDUIComponent.Text -> SduiTextComponent(component)
+        is SDUIComponent.TextInput -> SduiTextInputComponent(component, formValues, formErrors)
+        is SDUIComponent.Select -> SduiSelectComponent(component, formValues)
+        is SDUIComponent.Button -> SduiButtonComponent(component) {
             val action = component.action
-            if (action?.type == "submit") {
+            if (action.type == "submit") {
                 val data = mutableMapOf<String, String>()
                 action.fields?.forEach { fieldId ->
                     data[fieldId] = formValues[fieldId] ?: ""
@@ -126,10 +125,10 @@ fun SduiComponentResolver(
                 onAction(action.event ?: "SUBMIT", data)
             }
         }
-        "image" -> SduiImageComponent(component)
-        "card" -> SduiCardComponent(component) { child ->
+        is SDUIComponent.Image -> SduiImageComponent(component)
+        is SDUIComponent.Card -> SduiCardComponent(component) { child ->
             SduiComponentResolver(child, formValues, formErrors, onAction)
         }
-        "icon" -> SduiIconComponent(component)
+        is SDUIComponent.Icon -> SduiIconComponent(component)
     }
 }

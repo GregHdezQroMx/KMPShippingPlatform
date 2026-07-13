@@ -4,7 +4,7 @@ import '../../../parser/domain/models/sdui_component.dart';
 import '../providers/form_state_provider.dart';
 
 class SDUISelect extends ConsumerWidget {
-  final SDUIComponent component;
+  final SDUISelectComponent component;
 
   const SDUISelect({super.key, required this.component});
 
@@ -23,7 +23,7 @@ class SDUISelect extends ConsumerWidget {
           errorText: error,
           border: const OutlineInputBorder(),
         ),
-        items: component.options?.map((opt) {
+        items: component.options.map((opt) {
           return DropdownMenuItem(
             value: opt['value'],
             child: Text(opt['label'] ?? ''),

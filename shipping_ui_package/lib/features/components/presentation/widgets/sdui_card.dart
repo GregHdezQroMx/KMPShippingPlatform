@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../parser/domain/models/sdui_component.dart';
 
 class SDUICard extends StatelessWidget {
-  final SDUIComponent component;
+  final SDUICardComponent component;
   final Widget Function(SDUIComponent) childBuilder;
 
   const SDUICard({
@@ -19,7 +19,7 @@ class SDUICard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          children: component.children?.map((child) => childBuilder(child)).toList() ?? [],
+          children: component.children.map((child) => childBuilder(child)).toList(),
         ),
       ),
     );

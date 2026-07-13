@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../parser/domain/models/sdui_component.dart';
 
 class SDUIText extends StatelessWidget {
-  final SDUIComponent component;
+  final SDUITextComponent component;
 
   const SDUIText({super.key, required this.component});
 

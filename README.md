@@ -87,6 +87,14 @@ The `flutter_app` consumes the `shipping_ui_package` using a local path dependen
 ### 🪄 Advanced SDUI Orchestration
 Unlike traditional hybrid apps, this implementation uses a **100% Server-Driven UI** approach for both the **capture form** and the **result screen**. The host app (Flutter or Native) acts purely as an orchestrator, while the UI engine renders complex layouts (including Cards, Icons, and Buttons) dynamically from JSON configurations. This exceeds the technical challenge requirements to demonstrate a more scalable architecture.
 
+#### 🛡️ Scalability & Design Patterns (The "God Class" Solution)
+A common pitfall in SDUI architectures is the growth of a single `SDUIComponent` data class into a "God Class" with dozens of optional properties. To prevent this, we implemented a **Polymorphic Component Hierarchy**:
+1.  **Sealed Class Contract:** `SDUIComponent` is a sealed class in Kotlin (and abstract in Dart) that defines minimum common properties like `id` and `type`.
+2.  **Property Specialization:** Each component type (Text, Image, Input) is its own class containing only its relevant attributes.
+3.  **Why `override val id` in every Kotlin subclass?** 
+    *   **Data Class Integrity:** Required for Kotlin to include the ID in auto-generated `equals()`, `hashCode()`, and `copy()` methods, essential for Compose state management.
+    *   **Polymorphic Serialization:** Ensures `kotlinx.serialization` correctly maps the JSON fields to specific sub-type constructors while maintaining a unified interface for the renderers.
+
 ---
 
 ## 🏗 Deployment Wrapper & Artifact Strategy (Senior Integration)

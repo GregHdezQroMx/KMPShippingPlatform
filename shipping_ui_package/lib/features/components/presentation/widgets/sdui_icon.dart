@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../../../parser/domain/models/sdui_component.dart';
 
 class SDUIIcon extends StatelessWidget {
-  final SDUIComponent component;
+  final SDUIIconComponent component;
 
   const SDUIIcon({super.key, required this.component});
 
   @override
   Widget build(BuildContext context) {
-    final name = component.iconName ?? '';
+    final name = component.iconName;
 
     IconData icon;
     Color color;
@@ -22,7 +22,7 @@ class SDUIIcon extends StatelessWidget {
         break;
       case 'error':
       case 'error_outline':
-      case 'cloud_off': // Fallback visual para errores de red
+      case 'cloud_off': // Visual fallback for network errors
         icon = Icons.error_outline;
         break;
       case 'info':

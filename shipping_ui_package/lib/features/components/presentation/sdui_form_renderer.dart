@@ -85,24 +85,28 @@ class SDUIFormRenderer extends ConsumerWidget {
   }
 
   Widget _buildComponent(SDUIComponent component, WidgetRef ref) {
-    switch (component.type) {
-      case ComponentType.textInput: return SDUITextInput(component: component);
-      case ComponentType.select: return SDUISelect(component: component);
-      case ComponentType.button: 
-        return SDUIButton(
-          component: component, 
-          onPressed: () {
-            if (component.action != null) {
-              final formData = ref.read(sduiFormStateProvider).values;
-              SDUIActionHandler.handle(component.action!, formData, ref);
-            }
-          }
-        );
-      case ComponentType.text: return SDUIText(component: component);
-      case ComponentType.image: return SDUIImage(component: component);
-      case ComponentType.card: return SDUICard(component: component, childBuilder: (c) => _buildComponent(c, ref));
-      case ComponentType.icon: return SDUIIcon(component: component);
-      default: return const SizedBox.shrink();
+    if (component is SDUITextInputComponent) {
+      return SDUITextInput(component: component);
+    } else if (component is SDUISelectComponent) {
+      return SDUISelect(component: component);
+    } else if (component is SDUIButtonComponent) {
+      return SDUIButton(
+        component: component, 
+        onPressed: () {
+          final formData = ref.read(sduiFormStateProvider).values;
+          SDUIActionHandler.handle(component.action, formData, ref);
+        }
+      );
+    } else if (component is SDUITextComponent) {
+      return SDUIText(component: component);
+    } else if (component is SDUIImageComponent) {
+      return SDUIImage(component: component);
+    } else if (component is SDUICardComponent) {
+      return SDUICard(component: component, childBuilder: (c) => _buildComponent(c, ref));
+    } else if (component is SDUIIconComponent) {
+      return SDUIIcon(component: component);
+    } else {
+      return const SizedBox.shrink();
     }
   }
 }

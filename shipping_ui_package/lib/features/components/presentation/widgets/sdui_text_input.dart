@@ -4,7 +4,7 @@ import '../../../parser/domain/models/sdui_component.dart';
 import '../providers/form_state_provider.dart';
 
 class SDUITextInput extends ConsumerStatefulWidget {
-  final SDUIComponent component;
+  final SDUITextInputComponent component;
 
   const SDUITextInput({super.key, required this.component});
 
