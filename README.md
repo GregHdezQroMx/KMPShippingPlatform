@@ -31,6 +31,11 @@ sharedLogic/ (Mobile Data Implementation)
 └── features/quoting/data/
     └── repository/  # Mock implementations for mobile dev
 
+flutter_app/ (Legacy Flutter App)
+└── lib/features/quoting/
+    ├── domain/      # Re-implementation of 7 rules in Dart
+    └── presentation/# Legacy UI Flow (SDUI-based)
+
 server/ (Ktor Backend)
 └── Application.kt   # Consumes CalculateQuoteUseCase for validation
 ```
@@ -52,6 +57,7 @@ lib/
 *   **`:app:androidApp`**: Native Android entry point.
 *   **`:app:sharedLogic`**: The "Brain" (KMP). Contains shared business logic and common UI components.
 *   **`:app:iosApp`**: Native iOS entry point.
+*   **`:flutter_app`**: Legacy Dart application (standalone).
 *   **`:core`**: Common entities and utilities shared with the Server.
 *   **`:server`**: Ktor Backend implementation.
 
@@ -158,9 +164,31 @@ This approach combines **Backend Security** with **Frontend Responsiveness** usi
 
 ### How to Run
 
-- **Android:** Open in Android Studio and run the `:app:androidApp` module.
-- **iOS:** Open `app/iosApp/iosApp.xcodeproj` in Xcode or run via Android Studio if configured.
-- **Server:** Run `./gradlew :server:run`.
+#### 🤖 Android (Native Host)
+- Open the root project in **Android Studio**.
+- Select the `:app:androidApp` run configuration and press **Run**.
+
+#### 💙 Flutter Legacy App (`flutter_app`)
+You can run the legacy version (100% Dart) using two methods:
+
+**Prerequisites:** Run `flutter pub get` inside the `flutter_app` folder.
+
+**Option A: VS Code (Recommended)**
+1. Open the root folder in VS Code.
+2. Navigate to `flutter_app/lib/main.dart`.
+3. Select an emulator and press **F5**.
+
+**Option B: Android Studio**
+1. Open the project in Android Studio.
+2. Ensure the Flutter plugin is installed.
+3. In the project view, right-click on the `flutter_app` folder.
+4. Select **"Flutter: Run 'main.dart'"**.
+
+#### 🍎 iOS (Native Host)
+- Open `app/iosApp/iosApp.xcodeproj` in Xcode or run via Android Studio if configured.
+
+#### 🖥️ Server
+- Run `./gradlew :server:run` from the terminal.
 
 ---
 
