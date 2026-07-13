@@ -43,6 +43,8 @@
 - [x] **Method Channel (Native Side)**: Bidirectional communication between Kotlin and the Flutter AAR.
 - [x] **KMP Orchestration**: Call the `sharedLogic` (Kotlin) using the data received from either engine.
 - [x] **Unified Error Handling**: Display validation messages in both engines based on KMP results.
+- [x] **Stabilization & UX Parity**: Improved SDUI engine lifecycle (event handler persistence), deep form reset logic, and segregated error handling (inline validations vs full-screen service errors).
+- [x] **KMP Infra Fixes**: Resolved `DataStoreFactory` actual declarations for JVM and iOS targets to ensure cross-platform consistency.
 
 ## 🟣 Phase 5: Native iOS & SDUI Engines (Bonus / Future Proof)
 **Objective:** Expand to iOS and replicate the Flutter rendering logic in 100% Native Stacks.

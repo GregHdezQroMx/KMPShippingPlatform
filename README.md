@@ -59,7 +59,8 @@ lib/
 - **Unified Logic:** Shared networking, data processing, and validation using KMP.
 - **Hybrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
 - **Dual SDUI Engines (Hybrid):** Implementation of an "Engine Switcher" that allows toggling between Flutter and Jetpack Compose for rendering the same JSON configuration.
-- **Native SDUI (Bonus):** Replicated rendering engine in Jetpack Compose and SwiftUI for full native performance and parity.
+- **Unified Error Handling (Hybrid Parity):** Intelligent error segregation that displays validation messages inline within the form while providing full-screen feedback for remote service failures (Rule 7), ensuring consistent UX between Android and Flutter engines.
+- **Production-ready KMP Infrastructure:** Fully implemented `DataStore` persistence with verified `actual` declarations for Android, iOS, and JVM targets.
 - **Modular Design:** Feature-First Clean Architecture for high maintainability.
 - **Server Integration:** Ktor-based API for dynamic rate multipliers.
 
