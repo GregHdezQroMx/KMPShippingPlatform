@@ -129,6 +129,27 @@ In a real-world migration (like the one proposed for Liverpool), the native Andr
 
 ---
 
+## 🏗 Deployment Wrapper: Generating Native Artifacts
+
+To decouple the UI engine (Flutter) from the KMP native hosts (Android/iOS), the `flutter_sdui_wrapper_4_kmp` module compiles the Dart package into native binary artifacts. Follow these steps to generate the libraries:
+
+### 1. Generating Android Artifacts (.aar)
+To allow the native Android host to consume the Flutter UI without depending on Dart source code:
+```bash
+cd flutter_sdui_wrapper_4_kmp
+flutter clean
+flutter build aar --build-number=1.0.0 --debug
+```
+
+### 2. Generating iOS Artifacts (XCFramework)
+For the native iOS host, this process generates an XCFramework that you can drag and drop directly into Xcode:
+
+```Bash
+cd flutter_sdui_wrapper_4_kmp
+flutter build ios-framework --output=../app/iosApp/FlutterArtifacts
+```
+Output: A FlutterArtifacts folder is created containing Flutter.xcframework and App.xcframework. This allows iOS developers to work in SwiftUI without needing the Flutter SDK installed on their machines.
+
 ## 🚛 Shipping Quote Engine (Business Rules)
 
 The core calculation logic (implemented in `CalculateQuoteUseCase`) follows these 7 mandatory rules:
