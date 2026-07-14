@@ -40,6 +40,15 @@ class ShippingViewModel(
     private val _showNativeResult = MutableStateFlow(false)
     val showNativeResult: StateFlow<Boolean> = _showNativeResult.asStateFlow()
 
+    init {
+        try {
+            // Tu código actual de inicialización...
+        } catch (e: Exception) {
+            println("ERROR CRÍTICO EN KOTLIN: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
     /**
      * Executes the quote calculation (KMP logic).
      */

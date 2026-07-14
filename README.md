@@ -36,6 +36,7 @@ flutter_app/ (Legacy Flutter App)
     ├── domain/      # Re-implementation of 7 rules in Dart
     └── presentation/# Legacy UI Flow (SDUI-based)
 
+Future
 server/ (Ktor Backend)
 └── Application.kt   # Consumes CalculateQuoteUseCase for validation
 ```
@@ -56,10 +57,20 @@ lib/
 ### 📦 Modules
 *   **`:app:androidApp`**: Native Android entry point.
 *   **`:app:sharedLogic`**: The "Brain" (KMP). Contains shared business logic and common UI components.
-*   **`:app:iosApp`**: Native iOS entry point.
+*   **`:app:iosApp`**: Native iOS entry point. Future
 *   **`:flutter_app`**: Legacy Dart application (standalone).
 *   **`:core`**: Common entities and utilities shared with the Server.
-*   **`:server`**: Ktor Backend implementation.
+*   **`:server`**: Ktor Backend implementation. Future
+
+## 📱 Current Status: Phase 5 Completed
+
+* **Unified Logic:** Shared networking, data processing, and validation using KMP.
+* **Hybrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
+* **Dual SDUI Engines:** Implementation of an "Engine Switcher" that allows toggling between Flutter and Jetpack Compose.
+* **Unified Error Handling:** Intelligent error segregation between inline validation and remote service failures.
+* **KMP Infrastructure:** Fully implemented `DataStore` with verified declarations for all targets.
+* **SDUI Schema:** Polymorphic `sealed class` implementation to prevent "God Class" anti-patterns.
+* **iOS Implementation:** Native host structure initialized; stabilization of KMP-Bridge in progress (Bonus Phase).
 
 ## 📱 Features
 - **Unified Logic:** Shared networking, data processing, and validation using KMP.

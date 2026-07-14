@@ -32,6 +32,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "SharedLogic"
             isStatic = true
+            export(project(":core"))
         }
     }
     

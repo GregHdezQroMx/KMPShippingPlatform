@@ -53,18 +53,16 @@
 - [x] **Polymorphic Serialization:** Configure `kotlinx.serialization` with a class discriminator (`type`) for automatic de-serialization.
 - [x] **Renderer Update:** Refactor Compose and Flutter renderers to leverage type-safe models instead of optional property checks.
 
-## 🟤 Phase 6: Native iOS & SDUI Engines (Bonus / Future Proof)
-**Objective:** Expand to iOS and replicate the Flutter rendering logic in 100% Native Stacks.
-- [ ] **iOS Native Host:** Implementation of the native iOS host in SwiftUI consuming KMP and Flutter.
+## 🟡 Phase 6: Native iOS & SDUI Engines (Bonus / Current Focus)
+**Objective:** Expand to iOS and finalize bridge stability.
+- [x] **iOS Native Host:** Architecture initialized in SwiftUI.
+- [ ] **KMP-iOS Bridge:** Stabilization of `ShippingViewModelWrapper` (Currently addressing `SIGABRT` integration).
 - [ ] **SwiftUI SDUI Motor:** Implementation of the Component Catalog in SwiftUI.
-- [ ] **JSON Parity:** Ensure the same JSON renders identical UI across Flutter, Android, and iOS.
-
-## ⚪ Phase 7: Server & Documentation (`server`)
-**Objective:** Provide the remote multiplier and finalize deliverables.
-- [ ] **Ktor Endpoint:** Simple API that returns a dynamic multiplier for the "Remote Service" (Rule 7).
-- [ ] **README.md:** Finalize documentation (Architecture decisions, how to run, etc.).
+- [ ] **JSON Parity:** Ensure identical UI rendering across platforms.
 
 ## 🌟 Bonus / Desirable Features
+- [ ] **Ktor Endpoint:** Finalize dynamic multiplier mock.
+- [ ] **Documentation:** Final review of architectural decisions.
 - [ ] **Full-Stack Logic Sharing:** Expose the KMP `CalculateQuoteUseCase` in the `:server` module as the final Source of Truth for price validation.
 - [ ] **Server Persistence:** Implement **Exposed + PostgreSQL** to store shipping history.
 - [ ] **GPS Distance Calculation:** Implement device location to auto-calculate distance between origin and destination.

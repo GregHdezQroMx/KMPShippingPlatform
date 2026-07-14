@@ -6,10 +6,10 @@ import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quotin
 import org.jetbrains.compose.resources.getString
 import kotlin.math.ceil
 
-class CalculateQuoteUseCase(
+public class CalculateQuoteUseCase(
     private val tariffService: TariffRemoteService
 ) {
-    private suspend fun safeGetString(resource: org.jetbrains.compose.resources.StringResource): String {
+    public suspend fun safeGetString(resource: org.jetbrains.compose.resources.StringResource): String {
         return try {
             getString(resource)
         } catch (_: Throwable) {
