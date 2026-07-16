@@ -1,15 +1,19 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.presentation.widgets
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -38,17 +42,52 @@ fun SduiTextInputComponent(
     formValues: MutableMap<String, String>,
     formErrors: Map<String, String?>
 ) {
-    val text = formValues[component.id] ?: ""
+    // ESTADO LOCAL para evitar el lag ("arrana") del motor de Compose
+    var localText by remember { mutableStateOf(formValues[component.id] ?: "") }
     val error = formErrors[component.id]
 
+    // Sincronización externa (Ej: cuando se hace reset del formulario)
+    LaunchedEffect(formValues[component.id]) {
+        val externalValue = formValues[component.id] ?: ""
+        if (localText != externalValue) {
+            localText = externalValue
+        }
+    }
+
     OutlinedTextField(
-        value = text,
-        onValueChange = {
-            formValues[component.id] = it
+        value = localText,
+        onValueChange = { newValue ->
+            // FILTRO DE SEGURIDAD BASADO EN EL ESQUEMA JSON
+            val filtered = when (component.inputType) {
+                "decimal" -> {
+                    var hasDecimal = false
+                    newValue.filter { char ->
+                        if (char.isDigit()) true
+                        else if ((char == '.' || char == ',') && !hasDecimal) {
+                            hasDecimal = true
+                            true
+                        } else false
+                    }
+                }
+                "number" -> {
+                    val digits = newValue.filter { it.isDigit() }
+                    if (component.id == "codigoPostal") digits.take(5) else digits
+                }
+                else -> newValue
+            }
+            localText = filtered
+            formValues[component.id] = filtered
         },
         label = { Text(component.label) },
         isError = error != null,
         supportingText = { if (error != null) Text(error!!) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = when (component.inputType) {
+                "decimal" -> KeyboardType.Decimal
+                "number" -> KeyboardType.Number
+                else -> KeyboardType.Text
+            }
+        ),
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -116,15 +155,44 @@ fun SduiButtonComponent(component: SDUIComponent.Button, onClick: () -> Unit) {
 
 @Composable
 fun SduiImageComponent(component: SDUIComponent.Image) {
-    AsyncImage(
-        model = component.imageUrl,
-        contentDescription = component.label,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp)
-            .padding(vertical = 8.dp),
-        contentScale = ContentScale.Crop
-    )
+            .padding(vertical = 8.dp)
+            .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
+            .background(Color.Gray.copy(alpha = 0.1f)),
+        contentAlignment = Alignment.Center
+    ) {
+        AsyncImage(
+            model = component.imageUrl,
+            contentDescription = component.label,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            // Fallback para cuando no hay red o hay error, igual que en Flutter/iOS
+            error = androidx.compose.ui.graphics.painter.ColorPainter(Color.Transparent) 
+        )
+        
+        // Capa de Fallback visual si falla la carga
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.LocalShipping,
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = Color.Gray.copy(alpha = 0.4f)
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                "Shipping Platform",
+                style = MaterialTheme.typography.labelMedium,
+                color = Color.Gray
+            )
+        }
+    }
 }
 
 @Composable

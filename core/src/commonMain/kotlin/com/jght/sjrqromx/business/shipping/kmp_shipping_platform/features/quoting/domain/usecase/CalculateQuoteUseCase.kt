@@ -1,31 +1,20 @@
 package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.usecase
 
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.core.resources.*
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.*
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.repository.TariffRemoteService
-import org.jetbrains.compose.resources.getString
 import kotlin.math.ceil
 
 public class CalculateQuoteUseCase(
     private val tariffService: TariffRemoteService
 ) {
-    public suspend fun safeGetString(resource: org.jetbrains.compose.resources.StringResource): String {
-        return try {
-            getString(resource)
-        } catch (_: Throwable) {
-            // Fallback for unit tests where resources engine is not initialized
-            resource.toString() 
-        }
-    }
-
     suspend operator fun invoke(request: QuoteRequest): QuoteResult {
-        // Rule 5: Business validations
+        // Rule 5: Business validations (Hardcoded strings for iOS parity until Res initialization is fixed)
         if (request.weightKg <= 0) {
             return QuoteResult.Error(
                 QuoteError(
                     type = QuoteErrorType.VALIDATION_ERROR, 
                     code = "INVALID_WEIGHT", 
-                    message = safeGetString(Res.string.invalid_weight)
+                    message = "Weight must be greater than 0"
                 )
             )
         }
@@ -34,7 +23,7 @@ public class CalculateQuoteUseCase(
                 QuoteError(
                     type = QuoteErrorType.VALIDATION_ERROR, 
                     code = "INVALID_DISTANCE", 
-                    message = safeGetString(Res.string.invalid_distance)
+                    message = "Distance must be greater than 0"
                 )
             )
         }
@@ -45,7 +34,7 @@ public class CalculateQuoteUseCase(
                 QuoteError(
                     type = QuoteErrorType.VALIDATION_ERROR,
                     code = "INVALID_ZIP",
-                    message = safeGetString(Res.string.invalid_zip)
+                    message = "Zip code must be 5 digits"
                 )
             )
         }
@@ -58,7 +47,7 @@ public class CalculateQuoteUseCase(
                 QuoteError(
                     type = QuoteErrorType.REMOTE_SERVICE_ERROR,
                     code = "TARIFAS_SERVICE_UNAVAILABLE",
-                    message = safeGetString(Res.string.service_unavailable)
+                    message = "Could not get zone multiplier, please try again"
                 )
             )
         }

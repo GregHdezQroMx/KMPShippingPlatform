@@ -97,4 +97,25 @@ class ShippingViewModel(
     fun updateDataSource(useRemote: Boolean) {
         viewModelScope.launch { settingsRepository.updateDataSource(useRemote) }
     }
+
+    /**
+     * iOS Observation Helpers
+     */
+    fun watchSettings(onUpdate: (AppSettings) -> Unit) {
+        viewModelScope.launch {
+            settings.collect { onUpdate(it) }
+        }
+    }
+
+    fun watchQuoteResult(onUpdate: (QuoteResult?) -> Unit) {
+        viewModelScope.launch {
+            quoteResult.collect { onUpdate(it) }
+        }
+    }
+
+    fun watchShowNativeResult(onUpdate: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            showNativeResult.collect { onUpdate(it) }
+        }
+    }
 }

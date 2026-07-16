@@ -9,6 +9,7 @@ This project shares business logic across **Android**, **iOS**, and **Server** u
 - **Multiplatform:** [Kotlin Multiplatform (KMP)](https://kotlinlang.org/docs/multiplatform.html) for shared business logic.
 - **Frontend (Android):** Jetpack Compose for the native Android UI.
 - **Frontend (iOS):** SwiftUI for the native iOS UI.
+- **Frontend (Flutter):** Dart/Flutter for the legacy UI engine.
 - **Backend:** [Ktor](https://ktor.io/) asynchronous framework for the server-side logic.
 - **Language:** 100% Kotlin.
 - **Architecture:** Clean Architecture (Feature-First approach).
@@ -36,194 +37,89 @@ flutter_app/ (Legacy Flutter App)
     ├── domain/      # Re-implementation of 7 rules in Dart
     └── presentation/# Legacy UI Flow (SDUI-based)
 
-Future
+flutter_sdui_wrapper_4_kmp/ (AAR/XCFramework Wrapper)
+└── lib/main.dart    # Binary delivery vehicle for Native Hosts
+
 server/ (Ktor Backend)
 └── Application.kt   # Consumes CalculateQuoteUseCase for validation
-```
-
-### 💙 Flutter UI Package Structure (`shipping_ui_package`)
-The engine is **domain-agnostic** and follows a **Feature-First** pattern based on UI responsibilities:
-```text
-lib/
-├── core/
-│   └── bridge/          # MethodChannel & Platform Communication
-├── features/
-│   ├── parser/          # JSON to Domain Model transformation
-│   ├── components/      # UI Catalog (Inputs, Buttons, Cards)
-│   └── actions/         # Interaction handlers (Submit, Navigate)
-└── shared/              # Common UI constants & themes
 ```
 
 ### 📦 Modules
 *   **`:app:androidApp`**: Native Android entry point.
 *   **`:app:sharedLogic`**: The "Brain" (KMP). Contains shared business logic and common UI components.
-*   **`:app:iosApp`**: Native iOS entry point. Future
+*   **`:app:iosApp`**: Native iOS entry point.
 *   **`:flutter_app`**: Legacy Dart application (standalone).
+*   **`:flutter_sdui_wrapper_4_kmp`**: Flutter binary wrapper for AAR (Android) and XCFramework (iOS) generation.
 *   **`:core`**: Common entities and utilities shared with the Server.
-*   **`:server`**: Ktor Backend implementation. Future
+*   **`:server`**: Ktor Backend implementation.
 
-## 📱 Current Status: Phase 5 Completed
+## 📱 Current Status: Phase 6 Completed ✅
 
-* **Unified Logic:** Shared networking, data processing, and validation using KMP.
-* **Hybrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
-* **Dual SDUI Engines:** Implementation of an "Engine Switcher" that allows toggling between Flutter and Jetpack Compose.
-* **Unified Error Handling:** Intelligent error segregation between inline validation and remote service failures.
-* **KMP Infrastructure:** Fully implemented `DataStore` with verified declarations for all targets.
-* **SDUI Schema:** Polymorphic `sealed class` implementation to prevent "God Class" anti-patterns.
-* **iOS Implementation:** Native host structure initialized; stabilization of KMP-Bridge in progress (Bonus Phase).
+* **iOS Native Parity:** Replicated the Android "Native Host" architecture in iOS using SwiftUI, featuring reactive StateFlow watchers and pre-warmed Flutter engines.
+* **Deadlock-Free Integration:** Refactored KMP-iOS bridge using `@State` isolation and asynchrony to prevent Main Thread blocking, ensuring fluid 60fps interaction during text input.
+* **Transparent Engine Switching (Android):** Integrated `FlutterView` directly into the Compose hierarchy, allowing instant transitions between motors without intermediate screens.
+* **Unified Error Handling:** Intelligent error segregation between inline validation (red borders + error messages) and native result screens across all three engines.
+* **Cross-Platform Reset:** Bidirectional `resetForm` command implemented via `MethodChannel` to clear Flutter fields from Native Hosts when starting a "Nueva Cotización".
+* **Input Homologation:** Consistent numeric keyboard forcing and real-time filtering (blocking letters) in Compose, SwiftUI, and Dart.
 
 ## 📱 Features
-- **Unified Logic:** Shared networking, data processing, and validation using KMP.
-- **Hybrid UI Architecture:** Native Android Host embedding Flutter components via Method Channels.
-- **Dual SDUI Engines (Hybrid):** Implementation of an "Engine Switcher" that allows toggling between Flutter and Jetpack Compose for rendering the same JSON configuration.
-- **Unified Error Handling (Hybrid Parity):** Intelligent error segregation that displays validation messages inline within the form while providing full-screen feedback for remote service failures (Rule 7), ensuring consistent UX between Android and Flutter engines.
-- **Production-ready KMP Infrastructure:** Fully implemented `DataStore` persistence with verified `actual` declarations for Android, iOS, and JVM targets.
-- **Modular Design:** Feature-First Clean Architecture for high maintainability.
-- **Server Integration:** Ktor-based API for dynamic rate multipliers.
+- **Hybrid UI Architecture:** Native Hosts (Android/iOS) embedding Flutter components via Method Channels.
+- **SDUI Schema (Pro):** Polymorphic `sealed class` implementation with support for Banners, Inputs, and specialized Actions.
+- **Production-ready KMP:** Multi-threaded initialization and safe memory management in iOS/Native.
+- **Visual Consistency:** Identical design systems across Android, iOS, and Flutter, including image fallback handlers.
 
 ---
 
 ## 👨‍💻 Development with Visual Studio Code (Flutter/iOS Experts)
 
-This project is optimized for Flutter developers. The Flutter components are decoupled from the KMP core to allow a smooth development experience in VS Code.
-
 ### 📥 Getting Started (Flutter Host)
 1. Open the root folder in VS Code.
-2. The IDE should detect two Flutter projects: `shipping_ui_package` and `flutter_app`.
-3. Open a terminal and run:
+2. Open a terminal and run:
    ```bash
    cd flutter_app
    flutter pub get
    ```
-4. Select your preferred emulator (iOS Simulator or Android Emulator).
-5. Press **F5** or go to the "Run and Debug" tab to start the `flutter_app`.
-
-### 🧩 Package Integration
-The `flutter_app` consumes the `shipping_ui_package` using a local path dependency. Any changes made to the package will be immediately available in the host app without additional steps.
-
-### 🪄 Advanced SDUI Orchestration
-Unlike traditional hybrid apps, this implementation uses a **100% Server-Driven UI** approach for both the **capture form** and the **result screen**. The host app (Flutter or Native) acts purely as an orchestrator, while the UI engine renders complex layouts (including Cards, Icons, and Buttons) dynamically from JSON configurations. This exceeds the technical challenge requirements to demonstrate a more scalable architecture.
-
-#### 🛡️ Scalability & Design Patterns (The "God Class" Solution)
-A common pitfall in SDUI architectures is the growth of a single `SDUIComponent` data class into a "God Class" with dozens of optional properties. To prevent this, we implemented a **Polymorphic Component Hierarchy**:
-1.  **Sealed Class Contract:** `SDUIComponent` is a sealed class in Kotlin (and abstract in Dart) that defines minimum common properties like `id` and `type`.
-2.  **Property Specialization:** Each component type (Text, Image, Input) is its own class containing only its relevant attributes.
-3.  **Why `override val id` in every Kotlin subclass?** 
-    *   **Data Class Integrity:** Required for Kotlin to include the ID in auto-generated `equals()`, `hashCode()`, and `copy()` methods, essential for Compose state management.
-    *   **Polymorphic Serialization:** Ensures `kotlinx.serialization` correctly maps the JSON fields to specific sub-type constructors while maintaining a unified interface for the renderers.
-
----
-
-## 🏗 Deployment Wrapper & Artifact Strategy (Senior Integration)
-
-To ensure a professional and decoupled integration between the **KMP Native Hosts** and the **Flutter UI Engine**, we implemented a **Deployment Wrapper Architecture**.
-
-### 📦 Why the `flutter_sdui_wrapper_4_kmp` module?
-In a real-world migration (like the one proposed for Liverpool), the native Android/iOS teams should not be required to have the Flutter SDK installed or handle Dart source code directly.
-1.  **Agnosticism**: The `shipping_ui_package` remains a pure Dart package, untouched and safe for the legacy environment.
-2.  **Binary Integration**: The wrapper module acts as a "delivery vehicle" that compiles the Dart package into **Native Artifacts**:
-    *   **Android**: Generates an **`.aar`** (Android Archive) and a local Maven repository.
-    *   **iOS**: Generates a **`.framework`** or **`XCFramework`**.
-3.  **Stability**: By consuming pre-compiled artifacts, the KMP Host apps achieve faster build times and are immune to changes in the Flutter development environment.
-4.  **Method Channel Contracts**: The wrapper defines the strict communication protocol (Channel Name: `com.jght.shipping/ui_engine`) that KMP uses to orchestrate the UI.
+3. Select your preferred emulator and press **F5**.
 
 ---
 
 ## 🏗 Deployment Wrapper: Generating Native Artifacts
 
-To decouple the UI engine (Flutter) from the KMP native hosts (Android/iOS), the `flutter_sdui_wrapper_4_kmp` module compiles the Dart package into native binary artifacts. Follow these steps to generate the libraries:
+To update the Flutter engine used by the Native Hosts, you must regenerate the binaires from the `flutter_sdui_wrapper_4_kmp` module.
 
 ### 1. Generating Android Artifacts (.aar)
-To allow the native Android host to consume the Flutter UI without depending on Dart source code:
 ```bash
 cd flutter_sdui_wrapper_4_kmp
-flutter clean
 flutter build aar --build-number=1.0.0 --debug
 ```
+*Note: In Android Studio, perform a "Sync Project with Gradle Files" after this step.*
 
 ### 2. Generating iOS Artifacts (XCFramework)
-For the native iOS host, this process generates an XCFramework that you can drag and drop directly into Xcode:
-
 ```Bash
 cd flutter_sdui_wrapper_4_kmp
-flutter build ios-framework --output=../app/iosApp/FlutterArtifacts
+flutter build ios-framework --output=../app/iosApp/FlutterArtifacts --no-codesign
 ```
-Output: A FlutterArtifacts folder is created containing Flutter.xcframework and App.xcframework. This allows iOS developers to work in SwiftUI without needing the Flutter SDK installed on their machines.
+*Note: In Xcode, perform a "Clean Build Folder" (Cmd+Shift+K) to ensure the new framework is linked.*
 
 ## 🚛 Shipping Quote Engine (Business Rules)
 
-The core calculation logic (implemented in `CalculateQuoteUseCase`) follows these 7 mandatory rules:
-
 1.  **Base Tariff:** $50 MXN + ($8 × kg) + ($2 × km).
-2.  **Express Shipping:** Adds 40% to the total and reduces estimated delivery time by half.
-3.  **Special Handling:** Fixed +$100 surcharge for shipments over 20kg.
-4.  **Foreign Zone:** +25% additional surcharge for Zip Codes starting with "01" through "05".
-5.  **Strict Validation:** Weights or distances $\le$ 0 return a structured `VALIDATION_ERROR`.
-6.  **Delivery Estimation (Standard):** 1 base day + 1 day for every 200km (rounded up).
-7.  **Remote Multiplier:** Integration with a remote service (Mocked with 800ms delay) that provides a dynamic multiplier based on the destination zone.
-
----
-
-## 🧪 Testing Strategy
-
-The project implements a rigorous testing suite in `:core/commonTest` to ensure business rule integrity:
-- **Validation Tests:** Ensures zero or negative inputs are blocked.
-- **Rule Verification:** Precise calculation checks for Express, Special Handling, and Foreign Zones.
-- **Border Case (Edge) Testing:**
-    - Exact threshold validation (e.g., exactly 20kg, exactly 200km).
-    - Rounding logic for delivery days (Standard vs. Express).
-    - Zip Code boundary conditions (Prefix 05 vs 06).
-- **Service Resilience:** Simulating remote failures to ensure robust error handling.
-
----
-
-## 🧠 Architecture Decisions & Professional Best Practices
-
-### The "Source of Truth" in Production
-In a **production-grade environment**, the shipping calculation engine (the 7 business rules) must reside on the **Backend** as the ultimate **Source of Truth**. This ensures:
-1. **Security:** Preventing price manipulation on the client side.
-2. **Maintenance:** Allowing instant updates to tariffs without requiring App Store/Play Store releases.
-3. **Consistency:** Guaranteed identical results across all platforms (Web, Mobile, etc.).
-
-### The KMP Competitive Advantage
-By using **Kotlin Multiplatform (KMP)**, we can write the calculation engine **once** in a pure Kotlin module and share it between:
-*   **The Backend (Ktor/JVM):** For final, secure calculations.
-*   **The Mobile Apps (Android/iOS):** For real-time user feedback and offline estimation.
-
-This approach combines **Backend Security** with **Frontend Responsiveness** using the exact same codebase, eliminating cent-off discrepancies between client and server.
+2.  **Express Shipping:** Adds 40% to the total and reduces time by half.
+3.  **Special Handling:** +$100 surcharge for shipments over 20kg.
+4.  **Foreign Zone:** +25% surcharge for Zip Codes "01" through "05".
+5.  **Strict Validation:** Weights/Distances $\le$ 0 return `VALIDATION_ERROR`.
+6.  **Delivery Estimation:** 1 base day + 1 day per 200km.
+7.  **Remote Multiplier:** Dynamic multiplier via remote service mock.
 
 ---
 
 ### How to Run
 
 #### 🤖 Android (Native Host)
-- Open the root project in **Android Studio**.
-- Select the `:app:androidApp` run configuration and press **Run**.
-
-#### 💙 Flutter Legacy App (`flutter_app`)
-You can run the legacy version (100% Dart) using two methods:
-
-**Prerequisites:** Run `flutter pub get` inside the `flutter_app` folder.
-
-**Option A: VS Code (Recommended)**
-1. Open the root folder in VS Code.
-2. Navigate to `flutter_app/lib/main.dart`.
-3. Select an emulator and press **F5**.
-
-**Option B: Android Studio**
-1. Open the project in Android Studio.
-2. Ensure the Flutter plugin is installed.
-3. In the project view, right-click on the `flutter_app` folder.
-4. Select **"Flutter: Run 'main.dart'"**.
+- Open in **Android Studio** and run `:app:androidApp`.
 
 #### 🍎 iOS (Native Host)
-- Open `app/iosApp/iosApp.xcodeproj` in Xcode or run via Android Studio if configured.
+- Open `app/iosApp/iosApp.xcodeproj` in **Xcode** and run.
 
 #### 🖥️ Server
 - Run `./gradlew :server:run` from the terminal.
-
----
-
-- Android tests: `./gradlew :app:sharedLogic:testAndroidHostTest`
-- Shared tests: `./gradlew :app:sharedLogic:test`
-- Server tests: `./gradlew :server:test`

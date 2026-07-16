@@ -18,4 +18,7 @@ data class AppSettings(
     val engine: UiEngine = UiEngine.COMPOSE,
     val simulateNetworkError: Boolean = false,
     val useRemoteServer: Boolean = false
-)
+) {
+    // Secondary constructor for Swift compatibility
+    constructor() : this(UiEngine.COMPOSE, false, false)
+}

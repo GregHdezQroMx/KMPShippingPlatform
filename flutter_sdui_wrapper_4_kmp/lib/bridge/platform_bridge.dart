@@ -16,6 +16,10 @@ class PlatformBridge {
           final json = call.arguments as String;
           ref.read(sduiStateProvider.notifier).updateJson(json);
           break;
+        case 'resetForm':
+          // CLEAR FORM IN FLUTTER
+          ref.read(sduiFormStateProvider.notifier).reset();
+          break;
         case 'showValidationError':
           final Map<String, dynamic> args = Map<String, dynamic>.from(call.arguments);
           final String code = args['code'] ?? '';

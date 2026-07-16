@@ -27,13 +27,13 @@ const val QUOTING_UI_JSON = """
 {
   "screen": {
     "id": "cotizador_envios",
-    "title": "Cotizador de envíos (Add-to-App)",
+    "title": "Shipping Quote (Compose)",
     "components": [
       {
         "type": "image",
         "id": "banner",
         "label": "Banner",
-        "imageUrl": "https://raw.githubusercontent.com/flutter/website/main/src/assets/images/shared/brand/flutter/logo/flutter-lockup.png"
+        "imageUrl": "https://images.unsplash.com/photo-1519003300449-424ad040507b?q=80&w=600&h=300&auto=format&fit=crop"
       },
       {
         "type": "text",
@@ -45,13 +45,13 @@ const val QUOTING_UI_JSON = """
         "type": "text_input",
         "id": "peso",
         "label": "Peso (kg)",
-        "inputType": "number"
+        "inputType": "decimal"
       },
       {
         "type": "text_input",
         "id": "distancia",
         "label": "Distancia (km)",
-        "inputType": "number"
+        "inputType": "decimal"
       },
       {
         "type": "select",
@@ -67,7 +67,7 @@ const val QUOTING_UI_JSON = """
         "type": "text_input",
         "id": "codigoPostal",
         "label": "Código postal destino",
-        "inputType": "text"
+        "inputType": "number"
       },
       {
         "type": "button",

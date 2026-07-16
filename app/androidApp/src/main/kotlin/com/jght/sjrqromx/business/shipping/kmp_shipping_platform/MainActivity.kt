@@ -14,7 +14,6 @@ import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quotin
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.App
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.NativeResultScreen
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.ui.QUOTING_UI_JSON
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -28,8 +27,6 @@ class MainActivity : ComponentActivity() {
     }
     
     private var flutterEngine: FlutterEngine? = null
-    
-    // We inject the centralized ViewModel via Koin
     private val viewModel: ShippingViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,30 +40,17 @@ class MainActivity : ComponentActivity() {
             val quoteResult by viewModel.quoteResult.collectAsState()
 
             if (showNativeResult) {
-                // 100% NATIVE RESULT SCREEN (COMPOSE)
                 NativeResultScreen(
                     result = quoteResult,
                     onBack = { 
                         viewModel.resetQuote()
-                        // We remove auto-launch. When resetting, we return to the main screen of App.kt
-                        // where the user can choose to enter Flutter or go to settings.
+                        sduiBridge?.resetForm() // CLEAR FLUTTER FIELDS
                     }
                 )
             } else {
-                App(
-                    onFlutterEngineRequest = { launchFlutter() }
-                )
+                App()
             }
         }
-    }
-
-    private fun launchFlutter() {
-        val intent = FlutterActivity
-            .withCachedEngine("sdui_engine")
-            .build(this)
-        
-        intent.setClass(this, SduiFlutterActivity::class.java)
-        startActivity(intent)
     }
 
     private fun setupFlutterEngine() {
@@ -95,7 +79,6 @@ class MainActivity : ComponentActivity() {
                     val type = if (data["tipoEnvio"] == "EXPRESS") ShippingType.EXPRESS else ShippingType.STANDARD
                     val zipCode = data["codigoPostal"]?.toString() ?: ""
 
-                    // We delegate everything to the ViewModel
                     viewModel.calculateQuote(weight, distance, type, zipCode)
                 }
                 "RESET" -> {
@@ -104,7 +87,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Observamos el resultado para cerrar Flutter si es necesario
         lifecycleScope.launch {
             viewModel.quoteResult.collect { result ->
                 if (result != null) {
@@ -112,12 +94,10 @@ class MainActivity : ComponentActivity() {
                         result.error.type == com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.quoting.domain.model.QuoteErrorType.VALIDATION_ERROR
                     
                     if (isValidationError) {
-                        // If it is a validation error and we are in Flutter, we notify the bridge
                         sduiBridge?.showValidationError(result.error.code, result.error.message)
-                    } else {
-                        // If it is success or network error, we close Flutter (the result will be shown natively)
-                        sduiBridge?.finishFlow()
                     }
+                    // IMPORTANTE: Ya no llamamos a finishFlow() porque Flutter está embebido.
+                    // El cambio a la pantalla de resultados nativa lo maneja Compose automáticamente.
                 }
             }
         }

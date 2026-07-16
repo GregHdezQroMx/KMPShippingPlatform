@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../parser/domain/models/sdui_component.dart';
 import '../providers/form_state_provider.dart';
@@ -32,7 +33,6 @@ class _SDUITextInputState extends ConsumerState<SDUITextInput> {
   Widget build(BuildContext context) {
     final error = ref.watch(sduiFormStateProvider.select((s) => s.errors[widget.component.id]));
     
-    // Listen for value changes to synchronize the controller (especially useful on RESET)
     ref.listen(sduiFormStateProvider.select((s) => s.values[widget.component.id]), (prev, next) {
       final newValue = next?.toString() ?? '';
       if (_controller.text != newValue) {
@@ -49,13 +49,40 @@ class _SDUITextInputState extends ConsumerState<SDUITextInput> {
           errorText: error,
           border: const OutlineInputBorder(),
         ),
-        keyboardType: widget.component.inputType == 'number'
-            ? const TextInputType.numberWithOptions(decimal: true)
-            : TextInputType.text,
+        // MAPEADOR DE TECLADO HOMOLOGADO
+        keyboardType: _getKeyboardType(),
+        // FILTROS DE SEGURIDAD HOMOLOGADOS
+        inputFormatters: _getInputFormatters(),
         onChanged: (value) {
           ref.read(sduiFormStateProvider.notifier).updateValue(widget.component.id, value);
         },
       ),
     );
+  }
+
+  TextInputType _getKeyboardType() {
+    switch (widget.component.inputType) {
+      case 'decimal':
+        return const TextInputType.numberWithOptions(decimal: true);
+      case 'number':
+        return TextInputType.number;
+      default:
+        return TextInputType.text;
+    }
+  }
+
+  List<TextInputFormatter> _getInputFormatters() {
+    final formatters = <TextInputFormatter>[];
+    
+    if (widget.component.inputType == 'decimal') {
+      formatters.add(FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')));
+    } else if (widget.component.inputType == 'number') {
+      formatters.add(FilteringTextInputFormatter.digitsOnly);
+      if (widget.component.id == 'codigoPostal') {
+        formatters.add(LengthLimitingTextInputFormatter(5));
+      }
+    }
+    
+    return formatters;
   }
 }

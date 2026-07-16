@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -93,12 +94,15 @@ fun ComposeSduiRenderer(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             sduiScreen.components.forEach { component ->
-                SduiComponentResolver(
-                    component = component,
-                    formValues = formValues,
-                    formErrors = formErrors,
-                    onAction = onAction
-                )
+                // CLAVE PARA EL RENDIMIENTO: 'key' evita re-renderizar todo el árbol en cada tecla
+                key(component.id) {
+                    SduiComponentResolver(
+                        component = component,
+                        formValues = formValues,
+                        formErrors = formErrors,
+                        onAction = onAction
+                    )
+                }
             }
         }
     }

@@ -33,6 +33,10 @@ class AndroidSduiBridge(messenger: BinaryMessenger) : SduiBridge {
         channel.invokeMethod("renderUI", json)
     }
 
+    override fun resetForm() {
+        channel.invokeMethod("resetForm", null)
+    }
+
     override fun showValidationError(code: String, message: String) {
         channel.invokeMethod("showValidationError", mapOf("code" to code, "message" to message))
     }

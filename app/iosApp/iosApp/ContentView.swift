@@ -1,53 +1,119 @@
 import SwiftUI
-import SharedLogic // Esto es lo que conecta con tu KMP
-import Foundation
-
+import SharedLogic
 
 struct ContentView: View {
-    @ObservedObject var viewModelWrapper = ShippingViewModelWrapper()
-
+    @StateObject var viewModel = ShippingViewModelWrapper()
+    @State private var showSettings = false
+    
     var body: some View {
-        ZStack { // Usamos ZStack para ver si algo se superpone
-            Color.gray.opacity(0.1).ignoresSafeArea() // Fondo gris para ver si la vista existe
-            
-            VStack {
-                Text("Debugging UI")
-                    .font(.caption)
-                    .foregroundColor(.red)
-
-                if viewModelWrapper.showNativeResult {
-                    Text("¡Resultados recibidos!")
-                    NativeResultView(quoteResult: viewModelWrapper.quoteResult) {
-                        viewModelWrapper.reset()
+        NavigationView {
+            VStack(spacing: 0) {
+                // REGLA DE ORO: Si hay un resultado (Éxito o Error de Red), 
+                // se muestra la pantalla NATIVA sin importar el motor (Compose/Flutter)
+                if viewModel.showResult {
+                    NativeResultView(quoteResult: viewModel.quoteResult) {
+                        viewModel.reset()
                     }
+                } else if viewModel.appSettings.engine == .flutter {
+                    // Si no hay resultado, y el motor es Flutter, mostramos el lienzo de Dart
+                    FlutterViewControllerRepresentable()
+                        .edgesIgnoringSafeArea(.all)
+                } else if let screen = viewModel.sduiScreen {
+                    // Si no hay resultado, y el motor es Compose (SDUI Nativo), renderizamos Swift
+                    SduiRenderer(
+                        screen: screen,
+                        formStore: viewModel.formStore,
+                        onAction: { viewModel.handleAction($0) }
+                    )
                 } else {
-                    // Si esto está en blanco, es porque el botón no aparece
-                    Button("CALCULAR AHORA (FORZADO)") {
-                        viewModelWrapper.calculate(weight: 10.0, distance: 50.0, type: .standard, zip: "76800")
-                    }
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                    
-                    Text("Estado showNativeResult: \(viewModelWrapper.showNativeResult ? "TRUE" : "FALSE")")
+                    ProgressView("Cargando motor...")
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
+                
+                Divider()
+                
+                Button(action: { showSettings = true }) {
+                    Label("Configuración Pro", systemImage: "gearshape.fill")
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.purple.opacity(0.1))
+                        .foregroundColor(.purple)
+                        .bold()
+                }
+            }
+            .navigationBarHidden(true)
+            .sheet(isPresented: $showSettings) {
+                SettingsSheet(viewModel: viewModel)
             }
         }
     }
 }
 
-// 3. Esta es la estructura que permite que el ViewModel funcione
-class ObservableShippingViewModel: ObservableObject {
-    @Published var showNativeResult: Bool = false
-    @Published var quoteResult: QuoteResult? = nil // DEBE estar aquí
+struct SettingsSheet: View {
+    @ObservedObject var viewModel: ShippingViewModelWrapper
+    @Environment(\.presentationMode) var presentationMode
     
-    private let koinViewModel: ShippingViewModel
-    
-    init() {
-        // SharedLogic es el nombre de tu framework.
-        // KoinPlatform es el objeto que acabamos de crear arriba.
-        // getShippingViewModel es la función que creamos.
-        self.koinViewModel = SharedLogic.KoinPlatform.companion.getShippingViewModel()
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Modo de Ejecución").foregroundColor(.purple).bold()) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Label("Motor de UI Predeterminado", systemImage: "gearshape.2")
+                            .font(.headline)
+                        Text("Selecciona si prefieres renderizar con Compose o Flutter")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Picker("Motor", selection: Binding(
+                            get: { viewModel.appSettings.engine },
+                            set: { viewModel.updateEngine($0) }
+                        )) {
+                            Text("iOS/Native").tag(UiEngine.compose)
+                            Text("Dart/Flutter").tag(UiEngine.flutter)
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+                    .padding(.vertical, 5)
+                }
+                
+                Section(header: Text("Simulación y Datos").foregroundColor(.purple).bold()) {
+                    Toggle(isOn: Binding(
+                        get: { viewModel.appSettings.simulateNetworkError },
+                        set: { viewModel.updateNetworkError(enabled: $0) }
+                    )) {
+                        VStack(alignment: .leading) {
+                            Label("Simular Error de Red", systemImage: "ant.fill")
+                            Text("Fuerza el fallo del servicio remoto (Regla 7)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    Toggle(isOn: Binding(
+                        get: { viewModel.appSettings.useRemoteServer },
+                        set: { viewModel.updateDataSource(useRemote: $0) }
+                    )) {
+                        VStack(alignment: .leading) {
+                            Label("Usar Servidor Real (Ktor)", systemImage: "server.rack")
+                            Text("Alterna entre datos Mock o el microservicio remoto")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                
+                Button("Listo") {
+                    presentationMode.wrappedValue.dismiss()
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .foregroundColor(.purple)
+                .bold()
+            }
+            .navigationTitle("Configuración Pro")
+            .navigationBarItems(trailing: Button("Cerrar") {
+                presentationMode.wrappedValue.dismiss()
+            })
+        }
     }
 }

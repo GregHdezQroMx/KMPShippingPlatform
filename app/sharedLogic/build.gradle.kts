@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import java.util.Properties
 
 plugins {
@@ -25,6 +26,8 @@ val flutterEngineHash: String by lazy {
 }
 
 kotlin {
+    val xcf = XCFramework("SharedLogic")
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -33,6 +36,7 @@ kotlin {
             baseName = "SharedLogic"
             isStatic = true
             export(project(":core"))
+            xcf.add(this)
         }
     }
     
@@ -56,7 +60,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.core)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.koin.core)
+            api(libs.koin.core)
         }
         androidMain.dependencies {
             // Dynamic binary linking of the Flutter engine

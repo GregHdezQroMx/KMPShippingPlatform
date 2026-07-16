@@ -6,8 +6,36 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EE9A88C63006837C00184D78 /* Flutter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A88C43006837C00184D78 /* Flutter.xcframework */; };
+		EE9A88C73006837C00184D78 /* Flutter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A88C43006837C00184D78 /* Flutter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE9A88C83006837C00184D78 /* App.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A88C53006837C00184D78 /* App.xcframework */; };
+		EE9A88C93006837C00184D78 /* App.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A88C53006837C00184D78 /* App.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE9A88CC300683E800184D78 /* SharedLogic.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A88CB300683E800184D78 /* SharedLogic.xcframework */; };
+		EE9A88CD300683E800184D78 /* SharedLogic.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A88CB300683E800184D78 /* SharedLogic.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EE9A88CA3006837C00184D78 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EE9A88C73006837C00184D78 /* Flutter.xcframework in Embed Frameworks */,
+				EE9A88CD300683E800184D78 /* SharedLogic.xcframework in Embed Frameworks */,
+				EE9A88C93006837C00184D78 /* App.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		4DB86B0CA2DD1DC0333FE501 /* KMPShippingPlatform.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KMPShippingPlatform.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE9A88C43006837C00184D78 /* Flutter.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:S8QB4VV633:FLUTTER.IO LLC"; lastKnownFileType = wrapper.xcframework; name = Flutter.xcframework; path = FlutterArtifacts/Debug/Flutter.xcframework; sourceTree = "<group>"; };
+		EE9A88C53006837C00184D78 /* App.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = App.xcframework; path = FlutterArtifacts/Debug/App.xcframework; sourceTree = "<group>"; };
+		EE9A88CB300683E800184D78 /* SharedLogic.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SharedLogic.xcframework; path = ../sharedLogic/build/XCFrameworks/debug/SharedLogic.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -41,6 +69,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE9A88C63006837C00184D78 /* Flutter.xcframework in Frameworks */,
+				EE9A88CC300683E800184D78 /* SharedLogic.xcframework in Frameworks */,
+				EE9A88C83006837C00184D78 /* App.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,8 +91,19 @@
 			children = (
 				6C95D32C015080CAFF4531B5 /* Configuration */,
 				A027F95DFCB8FC53AC65EBB1 /* iosApp */,
+				EE9A88C33006837C00184D78 /* Frameworks */,
 				17F50EB10AA8F17C7741F6B9 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		EE9A88C33006837C00184D78 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EE9A88CB300683E800184D78 /* SharedLogic.xcframework */,
+				EE9A88C53006837C00184D78 /* App.xcframework */,
+				EE9A88C43006837C00184D78 /* Flutter.xcframework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -75,6 +117,7 @@
 				4FD2EAFFE3449407595CB406 /* Sources */,
 				92054D5852BF462177EE6173 /* Frameworks */,
 				8D3836F71345BF28231487B0 /* Resources */,
+				EE9A88CA3006837C00184D78 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -301,6 +344,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../sharedLogic/build/XCFrameworks/debug",
+					"$(PROJECT_DIR)/FlutterArtifacts/Debug",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
