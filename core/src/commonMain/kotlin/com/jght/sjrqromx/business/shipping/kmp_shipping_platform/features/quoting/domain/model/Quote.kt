@@ -14,7 +14,36 @@ data class QuoteRequest(
     val distanceKm: Double,
     val shippingType: ShippingType,
     val destinationZipCode: String
-)
+) {
+    /**
+     * Domain validation logic.
+     * Returns null if valid, or a QuoteError if invalid.
+     */
+    fun validate(): QuoteError? {
+        if (weightKg <= 0) {
+            return QuoteError(
+                type = QuoteErrorType.VALIDATION_ERROR,
+                code = "INVALID_WEIGHT",
+                message = "Weight must be greater than 0"
+            )
+        }
+        if (distanceKm <= 0) {
+            return QuoteError(
+                type = QuoteErrorType.VALIDATION_ERROR,
+                code = "INVALID_DISTANCE",
+                message = "Distance must be greater than 0"
+            )
+        }
+        if (destinationZipCode.length != 5 || destinationZipCode.toIntOrNull() == null) {
+            return QuoteError(
+                type = QuoteErrorType.VALIDATION_ERROR,
+                code = "INVALID_ZIP",
+                message = "Zip code must be 5 digits"
+            )
+        }
+        return null
+    }
+}
 
 @Serializable
 data class QuoteResponse(

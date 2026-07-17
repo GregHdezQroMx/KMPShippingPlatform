@@ -2,25 +2,6 @@ package com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
-
-/**
- * Main container for a Server-Driven UI screen.
- */
-@Serializable
-data class SDUIScreen(
-    val id: String,
-    val title: String,
-    val components: List<SDUIComponent>
-)
-
-/**
- * Wrapper for the screen object in JSON.
- */
-@Serializable
-data class SDUIScreenContainer(
-    val screen: SDUIScreen
-)
 
 /**
  * Polymorphic hierarchy for SDUI components.
@@ -104,18 +85,4 @@ sealed class SDUIComponent {
 data class SDUIOption(
     val value: String,
     val label: String
-)
-
-@Serializable
-data class SDUIAction(
-    val type: String,
-    val event: String? = null,
-    val fields: List<String>? = null
-)
-
-@Serializable
-data class SDUIValidation(
-    val rule: String,
-    val message: String,
-    val value: JsonElement? = null
 )

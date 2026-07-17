@@ -23,23 +23,25 @@ The application uses a **Shared Domain** strategy where business logic is centra
 
 ```text
 ### 🧩 Kotlin Multiplatform (KMP) Structure
-The application uses a **Shared Domain** strategy where business logic is centralized in the `:core` module to be consumed by both the **Server** and **Mobile Apps**:
+The application uses a **Rich Domain Model** strategy where business logic is centralized in the `:core` module, facilitating 100% testable logic without mocks through the `ShippingEngine`:
 
 ```text
 core/ (Shared Business Rules)
 └── features/quoting/domain/
-    ├── model/       # QuoteRequest, Shipment (Serializable)
+    ├── model/       # QuoteRequest (validated), ShippingEngine (Pure Logic)
     ├── repository/  # Interfaces (TariffRemoteService)
-    └── usecase/     # Calculation Engine (CalculateQuoteUseCase)
+    └── usecase/     # Orquestration (CalculateQuoteUseCase)
 ```
 
 ### 🍎 iOS Native Structure (Feature-First)
-The iOS project is organized to support modular growth and shared capabilities:
+The iOS project is organized to support modular growth and shared capabilities with a strict separation between SDUI and Business models:
 
 ```text
 iosApp/iosApp/
-├── App/            # Entry point & Global Config (Assets, Plist, Lifecycle)
-├── Core/           # Shared Capabilities (DI, Flutter Engine, SDUI Engine)
+├── App/            # Entry point & Global Config
+├── Core/           # Shared Capabilities
+│   ├── SDUI/       # SDUI Engine (Separated Models: Screen, Component, Action)
+│   └── Flutter/    # Flutter Engine management
 └── Features/       # Business modules (Quoting Presentation)
 ```
 

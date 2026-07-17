@@ -35,6 +35,8 @@
 - [x] **Input Homologation:** Forced numeric/decimal keyboards and real-time character filtering in all engines.
 - [x] **Visual Parity:** Synchronized Pro JSON schema with Image Banner support and unified header styles.
 - [x] **iOS Feature-First Refactor:** Reorganized `iosApp` into `App`, `Core` (DI, SDUI, Flutter), and `Features` structure.
+- [x] **Rich Domain Model Evolution:** Moved calculation logic to `ShippingEngine` and validation to `QuoteRequest` in KMP and Flutter.
+- [x] **Strict Model Segregation:** Split monolithic SDUI model files into specialized entities (Screen, Component, Action, Option) in both KMP and iOS.
 
 ## 🚀 Phase 7: Server Integration & Production Hardening (Current Focus)
 **Objective:** Implement the final Source of Truth and prepare for live data.

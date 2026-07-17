@@ -1,5 +1,5 @@
-import 'dart:math';
 import '../model/quote_models.dart';
+import '../model/shipping_engine.dart';
 import '../repository/tariff_repository.dart';
 
 class CalculateQuoteUseCase {
@@ -8,7 +8,7 @@ class CalculateQuoteUseCase {
   CalculateQuoteUseCase(this._repository);
 
   Future<QuoteResult> call(QuoteRequest request) async {
-    // Rule 5: Validation
+    // Step 1: Validation (Rich Domain logic could be added to QuoteRequest too)
     if (request.weightKg <= 0) {
       return QuoteError(
         type: QuoteErrorType.validationError,
@@ -25,7 +25,6 @@ class CalculateQuoteUseCase {
       );
     }
 
-    // Zip Code validation (Added for robustness)
     if (request.destinationZipCode.length != 5 || int.tryParse(request.destinationZipCode) == null) {
       return QuoteError(
         type: QuoteErrorType.validationError,
@@ -35,57 +34,13 @@ class CalculateQuoteUseCase {
     }
 
     try {
-      // Rule 7: Remote multiplier
+      // Step 2: Infrastructure / External Data
       final remoteMultiplier = await _repository.getRemoteMultiplier(request.destinationZipCode);
 
-      // Rule 1: Base tariff $50 + ($8 * kg) + ($2 * km)
-      double finalPrice = 50.0 + (8.0 * request.weightKg) + (2.0 * request.distanceKm);
-      final baseTariff = finalPrice;
+      // Step 3: Pure Domain Calculation via ShippingEngine
+      final response = ShippingEngine.calculate(request, remoteMultiplier);
 
-      // Rule 3: Special handling > 20kg (+$100)
-      bool specialHandling = request.weightKg > 20;
-      if (specialHandling) {
-        finalPrice += 100.0;
-      }
-
-      // Rule 4: Foreign Zone (01-05) (+25%)
-      final zipPrefix = int.tryParse(request.destinationZipCode.substring(0, min(2, request.destinationZipCode.length)));
-      bool foreignZone = zipPrefix != null && zipPrefix >= 1 && zipPrefix <= 5;
-      if (foreignZone) {
-        finalPrice *= 1.25;
-      }
-
-      // Rule 2: Express (+40%)
-      if (request.shippingType == ShippingType.express) {
-        finalPrice *= 1.40;
-      }
-
-      // Apply Remote Multiplier
-      finalPrice *= remoteMultiplier;
-
-      // Rule 6: Estimated time
-      // Standard: 1 base + 1 day per 200km
-      int estimatedDays = 1 + (request.distanceKm / 200.0).ceil();
-
-      // Rule 2: Express reduces time by half
-      if (request.shippingType == ShippingType.express) {
-        estimatedDays = (estimatedDays / 2.0).ceil();
-      }
-
-      return QuoteSuccess(
-        QuoteResponse(
-          finalPrice: finalPrice,
-          currency: 'MXN',
-          estimatedDays: estimatedDays,
-          details: QuoteDetail(
-            baseTariff: baseTariff,
-            shippingType: request.shippingType,
-            specialHandlingApplied: specialHandling,
-            foreignZoneApplied: foreignZone,
-            remoteMultiplier: remoteMultiplier,
-          ),
-        ),
-      );
+      return QuoteSuccess(response);
     } catch (e) {
       return QuoteError(
         type: QuoteErrorType.remoteServiceError,

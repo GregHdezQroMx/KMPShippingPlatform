@@ -1,15 +1,5 @@
 import Foundation
 
-struct SDUIScreenResponse: Decodable {
-    let screen: SDUIScreen
-}
-
-struct SDUIScreen: Decodable {
-    let id: String
-    let title: String
-    let components: [SDUIComponent]
-}
-
 enum SDUIComponent: Decodable, Identifiable {
     case image(SDUIImage)
     case text(SDUIText)
@@ -59,45 +49,8 @@ struct SDUISelection: Decodable {
     let options: [SDUIOption] 
 }
 
-struct SDUIOption: Decodable, Hashable { 
-    let value: String 
-    let label: String 
-    
-    enum CodingKeys: String, CodingKey {
-        case value, id, label
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.label = try container.decode(String.self, forKey: .label)
-        // Soporte para ambos esquemas: 'id' o 'value'
-        self.value = (try? container.decode(String.self, forKey: .value)) ?? 
-                     (try? container.decode(String.self, forKey: .id)) ?? ""
-    }
-}
-
 struct SDUIButton: Decodable { 
     let id: String
     let label: String
     let action: SDUIAction
-}
-
-struct SDUIAction: Decodable {
-    let event: String
-    
-    enum CodingKeys: String, CodingKey {
-        case event, type
-    }
-    
-    init(from decoder: Decoder) throws {
-        // Primero intentamos como String simple
-        if let container = try? decoder.singleValueContainer(),
-           let eventString = try? container.decode(String.self) {
-            self.event = eventString
-        } else {
-            // Si falla, intentamos como objeto con la llave 'event'
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.event = try container.decode(String.self, forKey: .event)
-        }
-    }
 }
