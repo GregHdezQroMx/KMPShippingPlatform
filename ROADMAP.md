@@ -34,9 +34,13 @@
 - [x] **Bidirectional Reset:** Implemented `resetForm` across all bridges to sync state after "Nueva Cotización".
 - [x] **Input Homologation:** Forced numeric/decimal keyboards and real-time character filtering in all engines.
 - [x] **Visual Parity:** Synchronized Pro JSON schema with Image Banner support and unified header styles.
-- [x] **iOS Feature-First Refactor:** Reorganized `iosApp` into `App`, `Core` (DI, SDUI, Flutter), and `Features` structure.
-- [x] **Rich Domain Model Evolution:** Moved calculation logic to `ShippingEngine` and validation to `QuoteRequest` in KMP and Flutter.
-- [x] **Atomic SDUI Modeling:** Decentralized monolithic SDUI models into individual files across KMP, iOS, and Flutter, enabling scalable component addition.
+
+## ✅ Phase 6.5: Senior Architecture Refactor & Atomic Modeling
+**Objective:** Evolve the codebase to production-grade standards with high maintainability.
+- [x] **Rich Domain Model:** Extracted mathematical logic into `ShippingEngine` and validation into `QuoteRequest` (KMP/Flutter).
+- [x] **Atomic SDUI Components:** Split monolithic models and widgets into individual files in KMP, Android, iOS, and Flutter.
+- [x] **Feature-First Organization:** Re-structured `iosApp` into a modular `Core`, `App`, and `Features` hierarchy.
+- [x] **Consistent Validation:** Homologated real-time input filtering and numeric keyboard forcing across all hosts.
 
 ## 🚀 Phase 7: Server Integration & Production Hardening (Current Focus)
 **Objective:** Implement the final Source of Truth and prepare for live data.

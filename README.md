@@ -19,10 +19,6 @@ This project shares business logic across **Android**, **iOS**, and **Server** u
 This project follows a **Feature-First Clean Architecture** approach for both KMP and Flutter components.
 
 ### 🧩 Kotlin Multiplatform (KMP) Structure
-The application uses a **Shared Domain** strategy where business logic is centralized in the `:core` module to be consumed by both the **Server** and **Mobile Apps**:
-
-```text
-### 🧩 Kotlin Multiplatform (KMP) Structure
 The application uses a **Rich Domain Model** strategy where business logic is centralized in the `:core` module, facilitating 100% testable logic without mocks through the `ShippingEngine`:
 
 ```text
@@ -30,7 +26,7 @@ core/ (Shared Business Rules)
 └── features/quoting/domain/
     ├── model/       # QuoteRequest (validated), ShippingEngine (Pure Logic)
     ├── repository/  # Interfaces (TariffRemoteService)
-    └── usecase/     # Orquestration (CalculateQuoteUseCase)
+    └── usecase/     # Orchestration (CalculateQuoteUseCase)
 ```
 
 ### 🍎 iOS Native Structure (Feature-First)
@@ -40,7 +36,7 @@ The iOS project is organized to support modular growth and shared capabilities w
 iosApp/iosApp/
 ├── App/            # Entry point & Global Config
 ├── Core/           # Shared Capabilities
-│   ├── SDUI/       # SDUI Engine (Modular Models: Text, Input, Button, etc.)
+│   ├── SDUI/       # SDUI Engine (Atomic Models & Widgets)
 │   └── Flutter/    # Flutter Engine management
 └── Features/       # Business modules (Quoting Presentation)
 ```
