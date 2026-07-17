@@ -16,6 +16,7 @@ node_modules/
 
 # iOS
 xcuserdata
+DerivedData/
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
@@ -51,8 +52,10 @@ build/
 **/*.a
 **/*.dylib
 **/*.framework
+**/*.xcframework
 
 # Specific ignores for this project structure
+app/iosApp/FlutterArtifacts/
 flutter_app/build/
 shipping_ui_package/build/
 flutter_sdui_wrapper_4_kmp/build/

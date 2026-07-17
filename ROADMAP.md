@@ -34,6 +34,7 @@
 - [x] **Bidirectional Reset:** Implemented `resetForm` across all bridges to sync state after "Nueva Cotización".
 - [x] **Input Homologation:** Forced numeric/decimal keyboards and real-time character filtering in all engines.
 - [x] **Visual Parity:** Synchronized Pro JSON schema with Image Banner support and unified header styles.
+- [x] **iOS Feature-First Refactor:** Reorganized `iosApp` into `App`, `Core` (DI, SDUI, Flutter), and `Features` structure.
 
 ## 🚀 Phase 7: Server Integration & Production Hardening (Current Focus)
 **Objective:** Implement the final Source of Truth and prepare for live data.

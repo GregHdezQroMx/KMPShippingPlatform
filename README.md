@@ -22,11 +22,26 @@ This project follows a **Feature-First Clean Architecture** approach for both KM
 The application uses a **Shared Domain** strategy where business logic is centralized in the `:core` module to be consumed by both the **Server** and **Mobile Apps**:
 
 ```text
+### 🧩 Kotlin Multiplatform (KMP) Structure
+The application uses a **Shared Domain** strategy where business logic is centralized in the `:core` module to be consumed by both the **Server** and **Mobile Apps**:
+
+```text
 core/ (Shared Business Rules)
 └── features/quoting/domain/
     ├── model/       # QuoteRequest, Shipment (Serializable)
     ├── repository/  # Interfaces (TariffRemoteService)
     └── usecase/     # Calculation Engine (CalculateQuoteUseCase)
+```
+
+### 🍎 iOS Native Structure (Feature-First)
+The iOS project is organized to support modular growth and shared capabilities:
+
+```text
+iosApp/iosApp/
+├── App/            # Entry point & Global Config (Assets, Plist, Lifecycle)
+├── Core/           # Shared Capabilities (DI, Flutter Engine, SDUI Engine)
+└── Features/       # Business modules (Quoting Presentation)
+```
 
 sharedLogic/ (Mobile Data Implementation)
 └── features/quoting/data/
