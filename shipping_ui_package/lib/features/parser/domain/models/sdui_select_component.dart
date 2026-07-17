@@ -1,9 +1,10 @@
 import 'sdui_component.dart';
+import 'sdui_option.dart';
 
 class SDUISelectComponent extends SDUIComponent {
   final String label;
   final String? defaultValue;
-  final List<Map<String, String>> options;
+  final List<SDUIOption> options;
 
   SDUISelectComponent({
     required super.id,
@@ -20,7 +21,7 @@ class SDUISelectComponent extends SDUIComponent {
       label: json['label'] ?? '',
       defaultValue: json['defaultValue'],
       options: (json['options'] as List?)
-              ?.map((e) => Map<String, String>.from(e))
+              ?.map((e) => SDUIOption.fromJson(Map<String, dynamic>.from(e)))
               .toList() ??
           [],
     );

@@ -25,8 +25,8 @@ class SDUISelect extends ConsumerWidget {
         ),
         items: component.options.map((opt) {
           return DropdownMenuItem(
-            value: opt['value'],
-            child: Text(opt['label'] ?? ''),
+            value: opt.value,
+            child: Text(opt.label),
           );
         }).toList(),
         onChanged: (newValue) {

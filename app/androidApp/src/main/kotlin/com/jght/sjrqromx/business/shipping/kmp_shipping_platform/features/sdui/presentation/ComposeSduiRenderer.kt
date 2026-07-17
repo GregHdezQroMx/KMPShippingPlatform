@@ -23,7 +23,15 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.*
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIScreenContainer
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIComponent
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIText
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUITextInput
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUISelect
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIButton
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIImage
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUICard
+import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.domain.model.SDUIIcon
 import com.jght.sjrqromx.business.shipping.kmp_shipping_platform.features.sdui.presentation.widgets.*
 import kotlinx.serialization.json.Json
 
@@ -116,10 +124,10 @@ fun SduiComponentResolver(
     onAction: (String, Map<String, String>) -> Unit
 ) {
     when (component) {
-        is SDUIComponent.Text -> SduiTextComponent(component)
-        is SDUIComponent.TextInput -> SduiTextInputComponent(component, formValues, formErrors)
-        is SDUIComponent.Select -> SduiSelectComponent(component, formValues)
-        is SDUIComponent.Button -> SduiButtonComponent(component) {
+        is SDUIText -> SduiTextComponent(component)
+        is SDUITextInput -> SduiTextInputComponent(component, formValues, formErrors)
+        is SDUISelect -> SduiSelectComponent(component, formValues)
+        is SDUIButton -> SduiButtonComponent(component) {
             val action = component.action
             if (action.type == "submit") {
                 val data = mutableMapOf<String, String>()
@@ -129,10 +137,10 @@ fun SduiComponentResolver(
                 onAction(action.event ?: "SUBMIT", data)
             }
         }
-        is SDUIComponent.Image -> SduiImageComponent(component)
-        is SDUIComponent.Card -> SduiCardComponent(component) { child ->
+        is SDUIImage -> SduiImageComponent(component)
+        is SDUICard -> SduiCardComponent(component) { child ->
             SduiComponentResolver(child, formValues, formErrors, onAction)
         }
-        is SDUIComponent.Icon -> SduiIconComponent(component)
+        is SDUIIcon -> SduiIconComponent(component)
     }
 }
