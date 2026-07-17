@@ -6,6 +6,8 @@ enum SDUIComponent: Decodable, Identifiable {
     case textInput(SDUITextInput)
     case selection(SDUISelection)
     case button(SDUIButton)
+    case card(SDUICard)
+    case icon(SDUIIcon)
     case unknown(String)
     
     var id: String {
@@ -15,6 +17,8 @@ enum SDUIComponent: Decodable, Identifiable {
         case .textInput(let m): return m.id
         case .selection(let m): return m.id
         case .button(let m): return m.id
+        case .card(let m): return m.id
+        case .icon(let m): return m.id
         case .unknown(let id): return id
         }
     }
@@ -34,23 +38,9 @@ enum SDUIComponent: Decodable, Identifiable {
         case "text_input": self = .textInput(try SDUITextInput(from: decoder))
         case "select", "selection": self = .selection(try SDUISelection(from: decoder))
         case "button": self = .button(try SDUIButton(from: decoder))
+        case "card": self = .card(try SDUICard(from: decoder))
+        case "icon": self = .icon(try SDUIIcon(from: decoder))
         default: self = .unknown(id)
         }
     }
-}
-
-struct SDUIImage: Decodable { let id: String; let label: String?; let imageUrl: String }
-struct SDUIText: Decodable { let id: String; let label: String; let style: String? }
-struct SDUITextInput: Decodable { let id: String; let label: String; let inputType: String? }
-
-struct SDUISelection: Decodable { 
-    let id: String
-    let label: String
-    let options: [SDUIOption] 
-}
-
-struct SDUIButton: Decodable { 
-    let id: String
-    let label: String
-    let action: SDUIAction
 }

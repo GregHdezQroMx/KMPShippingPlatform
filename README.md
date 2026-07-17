@@ -34,13 +34,13 @@ core/ (Shared Business Rules)
 ```
 
 ### 🍎 iOS Native Structure (Feature-First)
-The iOS project is organized to support modular growth and shared capabilities with a strict separation between SDUI and Business models:
+The iOS project is organized to support modular growth and shared capabilities with a strict separation between SDUI and Business models, where each UI component has its own definition for high maintainability:
 
 ```text
 iosApp/iosApp/
 ├── App/            # Entry point & Global Config
 ├── Core/           # Shared Capabilities
-│   ├── SDUI/       # SDUI Engine (Separated Models: Screen, Component, Action)
+│   ├── SDUI/       # SDUI Engine (Modular Models: Text, Input, Button, etc.)
 │   └── Flutter/    # Flutter Engine management
 └── Features/       # Business modules (Quoting Presentation)
 ```
