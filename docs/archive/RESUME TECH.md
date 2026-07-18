@@ -39,7 +39,7 @@ Este documento sirve como guía técnica y registro de decisiones de diseño (AD
 ### **Ubicación de las Reglas de Negocio**
 *   **Situación Actual:** Las reglas residen en los **UseCases**.
 *   **Justificación:** Es necesario para orquestar la **Regla #7** (asincronía del servicio remoto). El UseCase coordina la llamada al repositorio y aplica la lógica matemática.
-*   **Evolución Senior (Rich Domain Model):** Se propone mover la lógica matemática a **Entidades** (ej: `Shipment.kt`) para que el UseCase solo sea un orquestador, logrando una lógica 100% testeable sin mocks.
+*   **Evolución Senior (Rich Domain Model):** Se propone mover la lógica matemática a **Entidades** (ej: `Shipment.kt`) para que el UseCase solo sea un orquestador, logrando una lógica 100% testeable sin mocks. y aunado a esto cuanso se impplemente el modulo server este será la fuente unica de la verdad en el rol de Backend y hace uso del uscase en core (transparente).
 
 ---
 
@@ -73,7 +73,7 @@ Este documento sirve como guía técnica y registro de decisiones de diseño (AD
 
 ## 🚀 7. Roadmap y Visión a Futuro
 
-1.  **Phase 7 (Server Implementation):** Migrar las reglas de negocio al servidor Ktor para actualizaciones "Over-the-Air" sin pasar por las tiendas.
+1.  **Phase 7 (Server Implementation):** Migrar las reglas de negocio al servidor Ktor para actualizaciones "Over-the-Air" sin pasar por las tiendas. A su vez una arquitectura first-offline para no depender 100% de conectividad de la red.
 2.  **Binary Messenger (Pigeon):** Automatizar los Method Channels para que sean Type-Safe y evitar errores manuales de strings.
 3.  **SQLDelight:** Añadir persistencia local de historial de cotizaciones en KMP.
 4.  **Binary Artifacts CI/CD:** Automatizar la generación de `.aar` y `XCFramework` para desacoplar totalmente el desarrollo nativo del entorno Flutter.
