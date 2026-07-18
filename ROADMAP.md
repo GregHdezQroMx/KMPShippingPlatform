@@ -42,12 +42,19 @@
 - [x] **Feature-First Organization:** Re-structured `iosApp` into a modular `Core`, `App`, and `Features` hierarchy.
 - [x] **Consistent Validation:** Homologated real-time input filtering and numeric keyboard forcing across all hosts.
 
-## 🚀 Phase 7: Server Integration & Production Hardening (Current Focus)
-**Objective:** Implement the final Source of Truth and prepare for live data.
-- [ ] **Ktor Server:** Expose `CalculateQuoteUseCase` as a REST API.
-- [ ] **Remote Data Source:** Implement Ktor-Client in KMP to consume server rates.
-- [ ] **Data Persistence:** Store history using **Exposed + SQLite**.
-- [ ] **Documentation:** Final architectural review.
+## 🚀 Phase 7: Server Integration & Offline-First Sync (Current Focus)
+**Objective:** Implement the final Source of Truth with a robust Local-First architecture and Location awareness.
+- [ ] **Local SSoT (SQLDelight):** Implement local persistence with `updated_at` timestamps for all business parameters.
+- [ ] **Smart Repository:** Develop the "Contract of Freshness" (TTL logic) to prioritize local data with silent background updates.
+- [ ] **Ktor Param Engine:** Expose endpoints for dynamic Tariff Configuration and Remote TTL settings.
+- [ ] **Parameterized ShippingEngine:** Migrate pure logic to use synced configuration instead of hardcoded constants.
+- [ ] **Geo-Location Services:** Integrate Device Location API to automate distance calculation between current GPS and destination.
 
-## 🌟 Bonus / Desirable Features
-- [ ] GPS Distance Calculation via Device Location.
+## 🛠️ Phase 8: Admin Ecosystem & SDUI Visual Composer
+**Objective:** Provide a management interface for business rules and dynamic UI layout.
+- [ ] **Admin Dashboard (CMP):** Create a Desktop/Web module using Compose Multiplatform for business operators.
+- [ ] **Dynamic Pricing Manager:** Visual interface to update base fares, kg/km rates, and zone multipliers.
+- [ ] **SDUI Visual Builder:** Drag-and-drop tool to assemble JSON screen schemas using our Atomic Component catalog.
+
+## 🌟 Bonus / Future Possibilities
+- [ ] **Quotation History:** Persistent log of all calculations (Client & Server).

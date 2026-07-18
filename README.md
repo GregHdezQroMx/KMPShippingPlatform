@@ -66,14 +66,20 @@ server/ (Ktor Backend)
 *   **`:core`**: Common entities and utilities shared with the Server.
 *   **`:server`**: Ktor Backend implementation.
 
-## 📱 Current Status: Phase 6 Completed ✅
+## 📱 Current Status: Phase 6.5 Completed ✅
 
-* **iOS Native Parity:** Replicated the Android "Native Host" architecture in iOS using SwiftUI, featuring reactive StateFlow watchers and pre-warmed Flutter engines.
-* **Deadlock-Free Integration:** Refactored KMP-iOS bridge using `@State` isolation and asynchrony to prevent Main Thread blocking, ensuring fluid 60fps interaction during text input.
-* **Transparent Engine Switching (Android):** Integrated `FlutterView` directly into the Compose hierarchy, allowing instant transitions between motors without intermediate screens.
-* **Unified Error Handling:** Intelligent error segregation between inline validation (red borders + error messages) and native result screens across all three engines.
-* **Cross-Platform Reset:** Bidirectional `resetForm` command implemented via `MethodChannel` to clear Flutter fields from Native Hosts when starting a "Nueva Cotización".
-* **Input Homologation:** Consistent numeric keyboard forcing and real-time filtering (blocking letters) in Compose, SwiftUI, and Dart.
+* **Senior Architecture Refactor:** Migrated to a **Rich Domain Model** where business logic is centralized in `ShippingEngine.kt`, enabling 100% testability without mocks.
+* **Atomic SDUI Components:** Re-structured the SDUI motor across all hosts (Android, iOS, Flutter) using individual files per component for maximum scalability.
+* **iOS Native Parity:** Reorganized `iosApp` into a modular `Core`, `App`, and `Features` structure, synchronized with the disk for high maintainability.
+* **Consistent Validation:** Homologated real-time input filtering and numeric keyboard forcing across all three rendering engines.
+* **Deadlock-Free Integration:** Refactored KMP-iOS bridge using `@State` isolation and asynchrony to prevent Main Thread blocking.
+* **Cross-Platform Reset:** Bidirectional `resetForm` command implemented via `MethodChannel` to sync state across engines.
+
+## 🚀 Roadmap & Vision
+
+1.  **Phase 7 (Offline-First Sync):** Implementing a robust Local-First architecture using **SQLDelight** with dynamic TTL (Time-To-Live) managed by the server. This phase also includes **Geo-Location** integration for automatic distance calculation.
+2.  **Phase 8 (Admin Ecosystem):** Developing a Desktop/Web dashboard using **Compose Multiplatform** to manage tariff rules and visually compose SDUI screens.
+3.  **Future Possibilities:** Implementing quotation history and persistent logs for auditing.
 
 ## 📱 Features
 - **Hybrid UI Architecture:** Native Hosts (Android/iOS) embedding Flutter components via Method Channels.
